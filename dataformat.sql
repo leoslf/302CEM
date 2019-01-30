@@ -17,9 +17,9 @@ CREATE TABLE Customer (
 
 CREATE TABLE Request (
 	id INT PRIMARY KEY AUTO_INCREMENT,
-	Customer_id VARCHAR(12) NOT NULL,
+	Customer_id VARCHAR(255) NOT NULL,
 	Manufacturer_id VARCHAR(255), -- dummy for manufacturer side
-	Product_id VARCHAR(255) NOT NULL,
+	Product_id VARCHAR(12) NOT NULL,
 	qty INT NOT NULL,
 	order_date DATE NOT NULL,
 	due_date DATE NOT NULL,
