@@ -1,7 +1,7 @@
 # vim: ft=mysql
 
 CREATE TABLE Product (
-	id VARCHAR(255) PRIMARY KEY AUTO_INCREMENT,
+	id VARCHAR(1212) PRIMARY KEY AUTO_INCREMENT,
 	name VARCHAR(255) NOT NULL,
 	description VARCHAR(255) NOT NULL,
 	weight FLOAT NOT NULL
@@ -17,7 +17,7 @@ CREATE TABLE Customer (
 
 CREATE TABLE Request (
 	id INT PRIMARY KEY AUTO_INCREMENT,
-	Customer_id VARCHAR(255) NOT NULL,
+	Customer_id VARCHAR(12) NOT NULL,
 	Manufacturer_id VARCHAR(255), -- dummy for manufacturer side
 	Product_id VARCHAR(255) NOT NULL,
 	qty INT NOT NULL,
