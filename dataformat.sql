@@ -26,8 +26,7 @@ CREATE TABLE Request (
 	FOREIGN KEY (Customer_id)
 		REFERENCES Customer (id),
 	FOREIGN KEY (Product_id)
-		REFERENCES Product (id),
-	CHECK (order_date < due_date)
+		REFERENCES Product (id)
 );
 
 
