@@ -1,1 +1,5 @@
 "id","name","description","weight"
+,"DUMMY","Dummy to occupy the empty string ID","0"
+"000000000001","Custom Product 1","Test Product","1"
+"000000000002","Custom Product 2","Test Product 2","2"
+"000000000003","Custom Product 3","Test Product 3","3"
