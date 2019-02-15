@@ -16,4 +16,4 @@ Explaination
 
 - Powerpoint:
 
-  - TODO: paste the link here
+  - https://docs.google.com/presentation/d/1NJ9geEJUHZYSgFqvPeHhfAv1qeqHEwL1uieG5F_5uno/edit?usp=sharing
