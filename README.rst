@@ -3,10 +3,6 @@
 
 - Manufacturer Data Format
 
-  - Explaination
-
-    - Powerpoint:
-
   - Sample Data
 
 
@@ -15,5 +11,8 @@ Explaination
 
 - Manufacturer is:
 
-  - receiving data from Web Store, and
-  - providing data to Logistics
+  - receiving data from Web Store (defined by us), and
+  - providing data to Logistics Company (defined by them)
+
+- Powerpoint:
+  - TODO: paste the link here
