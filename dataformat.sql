@@ -29,6 +29,3 @@ CREATE TABLE Request (
 		REFERENCES Product (id)
 );
 
-
-
-		
