@@ -11,8 +11,9 @@ README.html
 *.log
 *.pdf
 
-credential/*.py
-
 *.csv
 *.json
 *.jsonl
+
+docs/_build/
+!docs/_build/.gitkeep

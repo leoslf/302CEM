@@ -2,7 +2,6 @@
 # -*- coding: UTF-8 -*-# enable debugging
 
 import sys
-sys.path.insert(0, "credential")
 import database_credential
 from logging import *
 import traceback
