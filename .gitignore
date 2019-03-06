@@ -10,7 +10,6 @@ README.html
 
 *.log
 *.pdf
-*.tex
 
 credential/*.py
 
