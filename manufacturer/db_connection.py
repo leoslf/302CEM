@@ -11,6 +11,8 @@ import re
 import pymysql
 from pymysql.cursors import DictCursorMixin, Cursor
 
+basicConfig(level = DEBUG)
+
 class OrderedDictCursor(DictCursorMixin, Cursor):
     dict_type = OrderedDict
 
@@ -144,6 +146,37 @@ def insert(table,
         conn.close()
 
     return -1
+
+def insert_by_query(table,
+                    columns,
+                    select_stmt,
+                    errmsg = None):
+    if isinstance(columns, list) and isinstance(columns[0], str):
+        columns = ", ".join(map(str, columns))
+    assert isinstance(columns, str)
+    assert isinstance(select_stmt, str)
+
+    sql = "INSERT INTO %s (%s) %s" % (table, columns, select_stmt)
+    debug(sql)
+
+    conn = db_conn()
+    assert conn
+
+    try:
+        with conn.cursor() as cursor:
+            cursor.execute(sql)
+            conn.commit()
+            return cursor.lastrowid
+    except Exception as e:
+        msg = "MYSQLError: errno %r, %r" % (e.args[0], e)
+        if errmsg is not None:
+            errmsg.append(msg)
+        # error(msg)
+    finally:
+        conn.close()
+
+    return -1
+
 
 def update(table,
            values,
