@@ -1,9 +1,13 @@
+import sys
+if sys.version_info[0] < 3:
+    input = raw_input
 
 def main(): # main function
-    marital_status = input ("Please input your marital status. [Y/N]")
+    marital_status = input("Please input your marital status. [Y/N]")
 
-    if marital_status == "Y"or "y":
-        self_income = int(input("Please input your income >"))
+
+    if marital_status.lower() == "y":
+        self_income = int(input("Please input your income > "))
         print ("Personal MPF is:", mpf(self_income))
         print ("Personal Tax (separate) is:", tax(self_income))
         print ("Personal Tax (joint) is:", m_tax(self_income))
@@ -16,24 +20,27 @@ def main(): # main function
         else:
             print ("Recommend Tax Assessment method: Separate Assessment")
             
-    elif marital_status == "N" or "n":
-        self_income = int(input("Please input your income >"))
+    elif marital_status.lower() == "n":
+        self_income = int(input("Please input your income > "))
         print ("Personal MPF is:", mpf(self_income))
         print ("Personal Tax is:", tax(self_income))
         
     else:
         print ("Input Error")
 
-def mpf (income): #Mandatory Contribution
+def mpf (income):
+    """ Mandatory Contribution """
     mpf = 0
     if income/12 >= 30000:
-        mpf =1500
+        mpf = 1500
     else:
         mpf = income * 0.05
         
     return mpf
 
-def tax (income): #Personal Tax Assessment (single)
+
+def tax (income):
+    """ Personal Tax Assessment (single) """
     tax = 0
     income = income - 132000
     #Personal Allowance (single)
@@ -54,7 +61,7 @@ def tax (income): #Personal Tax Assessment (single)
         income = income - 50000
         tax = 1000 + (income * 0.06)
         #Tax Bracket 2nd
-    elif income < 50000:
+    elif income <= 50000:
         income = income - 50000
         tax = 1000 + (income * 0.02)
         #Tax Bracket 1st
@@ -64,7 +71,8 @@ def tax (income): #Personal Tax Assessment (single)
     
     return tax
 
-def m_tax (income): #Personal Tax Assessment (Married)
+def m_tax (income):
+    """ Personal Tax Assessment (Married) """
     tax = 0
     income = income - 264000
     #Personal Allowance (Married)
@@ -85,7 +93,7 @@ def m_tax (income): #Personal Tax Assessment (Married)
         income = income - 50000
         tax = 1000 + (income * 0.06)
         #Tax Bracket 2nd
-    elif income < 50000:
+    elif income <= 50000:
         income = income - 50000
         tax = 1000 + (income * 0.02)
         #Tax Bracket 1st
@@ -95,4 +103,5 @@ def m_tax (income): #Personal Tax Assessment (Married)
     
     return tax
 
-main()
+if __name__ == "__main__":
+    main()
