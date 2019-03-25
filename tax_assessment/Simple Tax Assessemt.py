@@ -27,9 +27,20 @@ def main(): # main function
         else:
             print ("Recommend Tax Assessment method: Separate Assessment")
         '''
-        a = s_tax(self_income, marital_status),tax(self_income, marital_status),s_tax(spouse_income, marital_status),tax(spouse_income, marital_status) 
-        print ("max: ", max(a))   
-
+        a = s_tax(self_income, marital_status) + s_tax(spouse_income, marital_status),s_tax(self_income, "n") + s_tax(spouse_income, "n"), tax(self_income, marital_status) + tax(spouse_income, marital_status), tax(self_income, "n") + tax(spouse_income, "n")  
+        b = min(a)
+        
+        if (s_tax(self_income, marital_status) + s_tax(spouse_income, marital_status)) == min(a):
+            print ("Recommend joint assessment using standard Tax Rate ")   
+        elif (tax(self_income, marital_status) + tax(spouse_income, marital_status)) == min(a):
+            print ("Recommend joint assessment using progressive Tax Rate ")
+        elif (s_tax(self_income, "n") + s_tax(spouse_income, "n")) == min(a):
+            print ("Recommend separate assessment using standard Tax Rate ")
+        elif (tax(self_income, marital_status) + tax(spouse_income, marital_status)) == min(a):
+            print ("Recommend separate assessment using progressive Tax Rate ")
+        else:
+            print ("TBD")
+        
     elif marital_status.lower() == "n":
         self_income = int(input("Please input your income > "))
         print ("Personal MPF is:", mpf(self_income))
