@@ -8,14 +8,16 @@ def main(): # main function
 
     if marital_status.lower() == "y":
         self_income = int(input("Please input your income > "))
-        print ("Personal MPF is:", mpf(self_income))
-        print ("Personal Tax (separate) is:", tax(self_income))
-        print ("Personal Tax (joint) is:", m_tax(self_income))
         spouse_income = int(input("Please input spouse income >"))
+        print ("Personal MPF is:", mpf(self_income))
+        print ("Personal Tax (separate) is:", tax(self_income, marital_status))
+        print ("Personal Tax (joint) is:", tax(self_income, marital_status))
+        #Show self MPF & TAX
         print ("spouse MPF is:", mpf(spouse_income))
-        print ("Spouse Tax (separate) is:", tax(spouse_income))
-        print ("Spouse Tax (joint) is:", m_tax(spouse_income))
-        if tax(self_income) + tax(spouse_income) > m_tax(self_income) + m_tax(spouse_income):
+        print ("Spouse Tax (separate) is:", tax(spouse_income, marital_status))
+        print ("Spouse Tax (joint) is:", tax(spouse_income, marital_status))
+        #Show spouse MPF & TAX
+        if tax(self_income, marital_status) + tax(spouse_income, marital_status) > tax(self_income, marital_status) + tax(spouse_income, marital_status):
             print ("Recommend Tax Assessment method: Joint Assessment")
         else:
             print ("Recommend Tax Assessment method: Separate Assessment")
@@ -23,7 +25,7 @@ def main(): # main function
     elif marital_status.lower() == "n":
         self_income = int(input("Please input your income > "))
         print ("Personal MPF is:", mpf(self_income))
-        print ("Personal Tax is:", tax(self_income))
+        print ("Personal Tax is:", tax(self_income, marital_status))
         
     else:
         print ("Input Error")
@@ -39,12 +41,21 @@ def mpf (income):
     return mpf
 
 
-def tax (income):
-    """ Personal Tax Assessment (single) """
-    tax = 0
-    income = income - 132000
-    #Personal Allowance (single)
+def tax (income, marital_status):
 
+    tax = 0
+    allow = 0
+
+    if marital_status.lower() == "y":
+        allow = 264000
+    elif marital_status.lower() == "n":
+        allow = 132000
+    else:
+        print ("Error")
+    #Personal Allowance
+
+    income = income - allow
+    
     if income > 200000:
         income = income - 200000
         tax = 16000 + (income * 0.17)
@@ -70,7 +81,7 @@ def tax (income):
         #remove negative number
     
     return tax
-
+'''
 def m_tax (income):
     """ Personal Tax Assessment (Married) """
     tax = 0
@@ -102,6 +113,6 @@ def m_tax (income):
         #remove negative number
     
     return tax
-
+'''
 if __name__ == "__main__":
     main()
