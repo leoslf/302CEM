@@ -50,7 +50,7 @@ def division(marital_status):
         
     else:
         self_income = int(input("Please input your income > "))
-        print ("Personal MPF is:", mpf(self_income)* 12)
+        print ("Personal MPF is:", mpf(self_income))
         print ("Personal Tax (standard rate) is: %.2f" % s_tax(self_income, marital_status))
         print ("Personal Tax (progressive rate)is: %.2f" % tax(self_income, marital_status))
 
