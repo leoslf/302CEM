@@ -6,20 +6,15 @@ import os
 
 import csv
 import pytest
-import jsonlines 
-import multiprocessing
 import pipes
 
 from subprocess import Popen, PIPE, STDOUT
 
 from simple_tax_assessment import *
 
-# @pytest.fixture
 def cases():
     with open("tax_assessment_unittest.csv") as f:
         return list(csv.DictReader(f))
-    # with jsonlines.open("input.jsonl") as reader:
-    #     return list(reader)
 
 @pytest.mark.parametrize("case", cases())
 def test_run(case):

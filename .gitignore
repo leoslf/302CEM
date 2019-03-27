@@ -15,5 +15,7 @@ README.html
 *.json
 *.jsonl
 
+*.sublime-workspace
+
 docs/_build/
 !docs/_build/.gitkeep
