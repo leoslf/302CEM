@@ -34,6 +34,10 @@ def division():
 
     incomes = [self_income]
 
+    values = None
+    index = -1
+    case_labels = None
+
     marital_status = get_marital_status()
     if marital_status:
         spouse_income = int(input("Please input spouse income > "))
@@ -49,6 +53,9 @@ def division():
                   tax(joint_net_income, True),
                   tax(self_income - deduction([self_income]), False) + tax(spouse_income - deduction([spouse_income]), False)])
 
+
+        print_tax("Joint", total_income, deduction(incomes), True)
+
         print (values)
 
         index = values.index(min(values))
@@ -58,11 +65,7 @@ def division():
             "Recommend separate assessment using progressive Tax Rate",
         ]
 
-        print_tax("Joint", total_income, deduction(incomes), True)
 
-        print ("required tax: %.2f" % values[index])
-        print (case_labels[index])
-        
         
     else:
         values = map(int, [s_tax(self_income), tax(self_income, False)])
@@ -72,8 +75,10 @@ def division():
             "Recommend progressive Tax Rate."
         ]
 
-        print ("required tax: %.2f" % values[index])
-        print (case_labels[index])
+
+    print ("required tax: %.2f" % values[index])
+    print (case_labels[index])
+        
 
     
 def print_tax(role, total_income, deductions, marital_status = False):
