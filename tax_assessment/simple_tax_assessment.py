@@ -25,7 +25,11 @@ def division(marital_status):
         print ("spouse MPF is:", mpf(spouse_income))
         print_tax("Spouse", spouse_income)
         
-        values = (s_tax(self_income, marital_status) + s_tax(spouse_income, marital_status) ,s_tax(self_income, False) + s_tax(spouse_income, False), tax(self_income, marital_status) + tax(spouse_income, marital_status), tax(self_income, False) + tax(spouse_income, False))
+        values = [s_tax(self_income, marital_status) + s_tax(spouse_income, marital_status),
+                  tax(self_income, marital_status) + tax(spouse_income, marital_status),
+                  s_tax(self_income, False) + s_tax(spouse_income, False),
+                  tax(self_income, False) + tax(spouse_income, False)]
+
         index = values.index(min(values))
         case_labels = [
             "Recommend joint assessment using standard Tax Rate",
