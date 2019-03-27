@@ -21,7 +21,7 @@ STANDARD_TAX_RATE = 0.15
 ALLOWANCE = [132000, 264000]
 
 def get_marital_status():
-    marital_status = input("Please input your marital status. [Y/N]")
+    marital_status = input("Please input your marital status. [Y/N] ")
     marital_status = marital_status[0].lower()
     
     marital_status = ["n", "y"].index(marital_status)
