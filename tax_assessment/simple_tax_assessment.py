@@ -3,58 +3,59 @@ if sys.version_info[0] < 3:
     input = raw_input
 
 def main(): # main function
+    while True:
+        marital_status = input("Please input your marital status. [Y/N]")
+        marital_status = marital_status[0].lower()
+        try:
+            marital_status = ["n", "y"].index(marital_status)
+        except ValueError:
+            print ("ValueError. Please input again")
+            continue
+        break
 
-    marital_status = input("Please input your marital status. [Y/N]")
     division(marital_status)
 
 def division(marital_status):
-
-    if marital_status.lower() == "y":
+    if marital_status:
         self_income = int(input("Please input your income > "))
-        print ("Personal MPF is:", mpf(self_income)*12)
+        print ("Personal MPF is:", mpf(self_income))
         print_tax("Personal", self_income)
         spouse_income = int(input("Please input spouse income >"))
        
-        print ("spouse MPF is:", mpf(spouse_income)*12)
+        print ("spouse MPF is:", mpf(spouse_income))
         print_tax("Spouse", spouse_income)
         
-        a = s_tax(self_income, marital_status) + s_tax(spouse_income, marital_status),s_tax(self_income, "n") + s_tax(spouse_income, "n"), tax(self_income, marital_status) + tax(spouse_income, marital_status), tax(self_income, "n") + tax(spouse_income, "n")  
+        values = (s_tax(self_income, marital_status) + s_tax(spouse_income, marital_status) ,s_tax(self_income, False) + s_tax(spouse_income, False), tax(self_income, marital_status) + tax(spouse_income, marital_status), tax(self_income, False) + tax(spouse_income, False))
+        index = values.index(min(values))
+        case_labels = [
+            "Recommend joint assessment using standard Tax Rate",
+            "Recommend joint assessment using progressive Tax Rate",
+            "Recommend separate assessment using standard Tax Rate",
+            "Recommend separate assessment using progressive Tax Rate",
+        ]
         
-        if (s_tax(self_income, marital_status) + s_tax(spouse_income, marital_status)) == min(a):
-            print ("Recommend joint assessment using standard Tax Rate ")   
-        elif (tax(self_income, marital_status) + tax(spouse_income, marital_status)) == min(a):
-            print ("Recommend joint assessment using progressive Tax Rate ")
-        elif (s_tax(self_income, "n") + s_tax(spouse_income, "n")) == min(a):
-            print ("Recommend separate assessment using standard Tax Rate ")
-        elif (tax(self_income, marital_status) + tax(spouse_income, marital_status)) == min(a):
-            print ("Recommend separate assessment using progressive Tax Rate ")
-        else:
-            print ("")
         
-    elif marital_status.lower() == "n":
+    else:
         self_income = int(input("Please input your income > "))
         print ("Personal MPF is:", mpf(self_income)* 12)
         print ("Personal Tax (standard rate) is: %.2f" % s_tax(self_income, marital_status))
         print ("Personal Tax (progressive rate)is: %.2f" % tax(self_income, marital_status))
 
-        if s_tax(self_income, marital_status) > tax(self_income, marital_status):
+        if s_tax(self_income, marital_status) >= tax(self_income, marital_status):
             print ("Recommend Standard Tax Rate.")
         elif s_tax(self_income, marital_status) < tax(self_income, marital_status):
             print ("Recommend progressive Tax Rate.")
         else:
             print ("Progressive Tax Rate or Standard Tax rate.")
-
-    else:
-        print ("Input Error")
     
 def print_tax(role, income):
+    print (role, "Tax (separate, standard rate) is: %.2f" % s_tax(income, False))
+    print (role, "Tax (separate, progressive rate) is: %.2f" % tax(income, False))
+    print (role, "Tax (joint, standard rate) is: %.2f" % s_tax(income, True))
+    print (role, "Tax (joint, progressive rate) is: %.2f" % tax(income, True))
 
-    print (role, "Tax (separate, standard rate) is: %.2f" % s_tax(income, "n"))
-    print (role, "Tax (separate, progressive rate) is: %.2f" % tax(income, "n"))
-    print (role, "Tax (joint, standard rate) is: %.2f" % s_tax(income, "y"))
-    print (role, "Tax (joint, progressive rate) is: %.2f" % tax(income, "y"))
 
-def mpf (income):
+def monthly_mpf(income):
     """ Mandatory Contribution """
     mpf = 0
     if income/12 >= 30000:
@@ -64,39 +65,38 @@ def mpf (income):
         
     return mpf
 
+def mpf(income):
+    return monthly_mpf(income) * 12
+
 def s_tax(income, marital_status):
-    
+    """ Standard Tax Rate Method """
     tax = 0
-    allow = 0
+    allowance = 0
 
-    if marital_status.lower() == "y":
-        allow = 264000
-    elif marital_status.lower() == "n":
-        allow = 132000
+    if marital_status:
+        allowance = 264000
     else:
-        print ("Error")
+        allowance = 132000
 
-    tax = (income - allow) * 0.15
+    tax = (income - allowance) * 0.15
 
     if tax < 0:
         tax = 0
     return tax
     #Personal Allowance standard reat
 
-def tax (income, marital_status):
-
+def tax(income, marital_status):
+    """ Progressive Tax Rate Method """
     tax = 0
-    allow = 0
+    allowance = 0
 
-    if marital_status.lower() == "y":
-        allow = 264000
-    elif marital_status.lower() == "n":
-        allow = 132000
+    if marital_status:
+        allowance = 264000
     else:
-        print ("Error")
-    #Personal Allowance progressive rate
+        allowance = 132000
+    #Personal allowanceance progressive rate
 
-    income = income - allow
+    income = income - allowance
     
     if income > 200000:
         income = income - 200000
@@ -118,7 +118,7 @@ def tax (income, marital_status):
         income = income - 50000
         tax = 1000 + (income * 0.02)
         #Tax Bracket 1st
-    if tax  < 0:
+    if tax < 0:
         tax = 0
         #remove negative number
     
