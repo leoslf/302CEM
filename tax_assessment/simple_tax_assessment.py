@@ -33,6 +33,8 @@ def division(marital_status):
             "Recommend separate assessment using standard Tax Rate",
             "Recommend separate assessment using progressive Tax Rate",
         ]
+
+        print (case_labels[index])
         
         
     else:
