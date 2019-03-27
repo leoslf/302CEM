@@ -32,16 +32,14 @@ def division(marital_status):
         print ("spouse MPF is:", mpf(spouse_income))
         print_tax("Spouse", spouse_income)
         
-        values = [s_tax(self_income, marital_status) + s_tax(spouse_income, marital_status),
+        values = [s_tax(self_income) + s_tax(spouse_income),
                   tax(self_income, marital_status) + tax(spouse_income, marital_status),
-                  s_tax(self_income, False) + s_tax(spouse_income, False),
                   tax(self_income, False) + tax(spouse_income, False)]
 
         index = values.index(min(values))
         case_labels = [
-            "Recommend joint assessment using standard Tax Rate",
-            "Recommend joint assessment using progressive Tax Rate",
             "Recommend separate assessment using standard Tax Rate",
+            "Recommend joint assessment using progressive Tax Rate",
             "Recommend separate assessment using progressive Tax Rate",
         ]
 
@@ -51,20 +49,18 @@ def division(marital_status):
     else:
         self_income = int(input("Please input your income > "))
         print ("Personal MPF is:", mpf(self_income))
-        print ("Personal Tax (standard rate) is: %.2f" % s_tax(self_income, marital_status))
+        print ("Personal Tax (standard rate) is: %.2f" % s_tax(self_income))
         print ("Personal Tax (progressive rate)is: %.2f" % tax(self_income, marital_status))
 
-        if s_tax(self_income, marital_status) >= tax(self_income, marital_status):
+        if s_tax(self_income) >= tax(self_income, marital_status):
             print ("Recommend Standard Tax Rate.")
-        elif s_tax(self_income, marital_status) < tax(self_income, marital_status):
+        elif s_tax(self_income) < tax(self_income, marital_status):
             print ("Recommend progressive Tax Rate.")
-        else:
-            print ("Progressive Tax Rate or Standard Tax rate.")
     
 def print_tax(role, income):
-    print (role, "Tax (separate, standard rate) is: %.2f" % s_tax(income, False))
+    print (role, "Tax (separate, standard rate) is: %.2f" % s_tax(income))
     print (role, "Tax (separate, progressive rate) is: %.2f" % tax(income, False))
-    print (role, "Tax (joint, standard rate) is: %.2f" % s_tax(income, True))
+    print (role, "Tax (joint, standard rate) is: %.2f" % s_tax(income))
     print (role, "Tax (joint, progressive rate) is: %.2f" % tax(income, True))
 
 
