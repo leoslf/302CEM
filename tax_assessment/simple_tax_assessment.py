@@ -37,8 +37,7 @@ def get_marital_status():
 
 
 def main(): # main function
-    while True:
-        division()
+    division()
 
 
 def deduction(incomes):
@@ -65,9 +64,11 @@ def division():
         total_income = sum(incomes)
         joint_net_income = total_income - deduction(incomes)
 
-        values = map(int, [s_tax(joint_net_income),
-                  tax(joint_net_income, True),
-                  tax(self_income - deduction([self_income]), False) + tax(spouse_income - deduction([spouse_income]), False)])
+        values = map(int, [
+            s_tax(self_income - deduction([self_income])) + s_tax(spouse_income - deduction([spouse_income])),
+            s_tax(joint_net_income),
+            tax(joint_net_income, True),
+            tax(self_income - deduction([self_income]), False) + tax(spouse_income - deduction([spouse_income]), False)])
 
 
         print_tax("Joint", total_income, deduction(incomes), True)
@@ -76,8 +77,9 @@ def division():
 
         index = values.index(min(values))
         case_labels = [
-            "Recommend joint assessment using standard Tax Rate",
+            "Recommend separate assessment using standard Tax Rate",
             "Recommend joint assessment using progressive Tax Rate",
+            "Recommend joint assessment using standard Tax Rate",
             "Recommend separate assessment using progressive Tax Rate",
         ]
 
@@ -116,7 +118,7 @@ def s_tax(income):
 
     Personal Allowance standard rate
     """
-    return int(income * STANDARD_TAX_RATE)
+    return int(int(income) * STANDARD_TAX_RATE)
 
 
 def tax(income, marital_status):
@@ -127,7 +129,7 @@ def tax(income, marital_status):
     # Personal allowanceance progressive rate
     allowance = ALLOWANCE[marital_status]
 
-    income = income - allowance
+    income = int(income) - allowance
     
     if income > 200000:
         income = income - 200000
