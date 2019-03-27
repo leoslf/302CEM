@@ -30,7 +30,7 @@ def deduction(incomes):
 
 def division():
     self_income = int(input("Please input your income > "))
-    print_tax("Personal", self_income - deduction([self_income]))
+    print_tax("Personal", self_income, deduction([self_income]))
 
     incomes = [self_income]
 
@@ -38,7 +38,7 @@ def division():
     if marital_status:
         spouse_income = int(input("Please input spouse income > "))
        
-        print_tax("Spouse", spouse_income - deduction([self_income]))
+        print_tax("Spouse", spouse_income, deduction([spouse_income]))
 
         incomes.append(spouse_income)
 
@@ -47,7 +47,9 @@ def division():
 
         values = map(int, [s_tax(joint_net_income),
                   tax(joint_net_income, True),
-                  tax(self_income, False) + tax(spouse_income, False)])
+                  tax(self_income - deduction([self_income]), False) + tax(spouse_income - deduction([spouse_income]), False)])
+
+        print (values)
 
         index = values.index(min(values))
         case_labels = [
@@ -56,7 +58,7 @@ def division():
             "Recommend separate assessment using progressive Tax Rate",
         ]
 
-        print_tax("Joint", joint_net_income, True)
+        print_tax("Joint", total_income, deduction(incomes), True)
 
         print ("required tax: %.2f" % values[index])
         print (case_labels[index])
@@ -74,8 +76,9 @@ def division():
         print (case_labels[index])
 
     
-def print_tax(role, income, marital_status = False):
-    print ("%s MPF is: %.2f" % (role, mpf(income)))
+def print_tax(role, total_income, deductions, marital_status = False):
+    income = total_income - deductions
+    print ("%s MPF is: %.2f" % (role, deductions))
     print ("%s Tax in standard rate: %.2f" % (role, s_tax(income)))
     print ("%s Tax in progressive rate: %.2f" % (role, tax(income, marital_status)))
 
@@ -91,7 +94,7 @@ def s_tax(income):
 
     Personal Allowance standard rate
     """
-    return income * STANDARD_TAX_RATE
+    return int(income * STANDARD_TAX_RATE)
 
 
 def tax(income, marital_status):
@@ -128,7 +131,7 @@ def tax(income, marital_status):
         tax = 0
         #remove negative number
     
-    return tax
+    return int(tax)
 
 if __name__ == "__main__":
     main()
