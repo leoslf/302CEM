@@ -52,10 +52,15 @@ def division(marital_status):
         print ("Personal Tax (standard rate) is: %.2f" % s_tax(self_income))
         print ("Personal Tax (progressive rate)is: %.2f" % tax(self_income, marital_status))
 
-        if s_tax(self_income) >= tax(self_income, marital_status):
-            print ("Recommend Standard Tax Rate.")
-        elif s_tax(self_income) < tax(self_income, marital_status):
-            print ("Recommend progressive Tax Rate.")
+        values = [s_tax(self_income), tax(self_income, False)]
+        index = values.index(min(values))
+        case_labels = [
+            "Recommend Standard Tax Rate.",
+            "Recommend progressive Tax Rate."
+        ]
+
+        print (case_labels[index])
+
     
 def print_tax(role, income):
     print (role, "Tax (separate, standard rate) is: %.2f" % s_tax(income))
