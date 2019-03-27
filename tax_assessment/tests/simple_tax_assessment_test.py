@@ -36,10 +36,10 @@ def test_run(case):
 
 
     eprint("stderr:\n\"%s\"" % stderr)
-    eprint ("stdout: %s" % stdout)
-
+    # eprint ("stdout: %s" % stdout)
     actual_tax = int(stdout)
 
+    eprint("expected_tax: %d" % expected_tax)
     eprint("actual_tax: %d" % actual_tax)
 
     assert expected_tax == actual_tax

@@ -26,13 +26,6 @@ def get_marital_status():
     
     marital_status = ["n", "y"].index(marital_status)
 
-    """
-    try:
-        marital_status = ["n", "y"].index(marital_status)
-    except ValueError:
-        eprint ("ValueError. Please input again")
-        continue
-    """
     return marital_status
 
 
@@ -40,12 +33,27 @@ def main(): # main function
     division()
 
 
-def deduction(incomes):
-    return sum(map(mpf, incomes))
+def deduction(total_income):
+    """ Deduction calculation with predefined functions on Total Income of **a** person
+
+    Args:
+        total_income (int): Total Income of **a** person
+
+    Returns:
+        int: The required deduction on total income
+    """
+    # Predefined deduction functions
+    deduction_functions = [mpf]
+
+    # NOTE: [expression for variable in iterable]
+    return sum([int(f(total_income)) for f in deduction_functions])
+
+def net_income(total_income):
+    return total_income - deduction(total_income)
 
 def division():
     self_income = int(input("Please input your income > "))
-    print_tax("Personal", self_income, deduction([self_income]))
+    print_tax("Personal", self_income, deduction(self_income))
 
     incomes = [self_income]
 
@@ -57,21 +65,24 @@ def division():
     if marital_status:
         spouse_income = int(input("Please input spouse income > "))
        
-        print_tax("Spouse", spouse_income, deduction([spouse_income]))
+        print_tax("Spouse", spouse_income, deduction(spouse_income))
 
         incomes.append(spouse_income)
 
-        total_income = sum(incomes)
-        joint_net_income = total_income - deduction(incomes)
+        # NOTE: map(f, [x_1, x_2, ..., x_n]) -> [f(x_1), f(x_2), ..., f(x_n)]
+        net_incomes = map(net_income, incomes)
+        joint_net_income = sum(net_incomes) 
+
+        self_net_income, spouse_net_income = net_incomes
 
         values = map(int, [
-            s_tax(self_income - deduction([self_income])) + s_tax(spouse_income - deduction([spouse_income])),
+            s_tax(self_net_income) + s_tax(spouse_net_income),
             s_tax(joint_net_income),
             tax(joint_net_income, True),
-            tax(self_income - deduction([self_income]), False) + tax(spouse_income - deduction([spouse_income]), False)])
+            tax(self_net_income, False) + tax(spouse_net_income, False)])
 
 
-        print_tax("Joint", total_income, deduction(incomes), True)
+        print_tax("Joint", sum(incomes), sum(map(deduction, incomes)), True)
 
         eprint(values)
 
@@ -108,27 +119,47 @@ def print_tax(role, total_income, deductions, marital_status = False):
 
 
 def mpf(income):
-    """ Mandatory Contribution """
+    """ Mandatory Provident Fund (MPF) Contribution
+
+    Args:
+        income (int): Total Income of **a** person
+
+    Returns:
+        int: The employee-side MPF contribution.
+    """
     if income < MPF_THRESHOLD:
         return 0
+
     return min(income * MPF_CONTRIBUTION, MPF_MAX)
 
 def s_tax(income):
-    """ Standard Tax Rate Method
+    """ Tax Payable at Standard Rate
 
-    Personal Allowance standard rate
+    Args:
+        income (int): Net Total Income (NI) = Total Income - Deductions
+
+    Returns:
+        int: The tax payable at standard rate.
+        
     """
     return int(int(income) * STANDARD_TAX_RATE)
 
 
 def tax(income, marital_status):
-    """ Progressive Tax Rate Method
+    """ Tax Payable at Progressive Rate
+
+    Args:
+        income (int): Net Total Income (NI) = Total Income - Deductions
+
+    Returns:
+        int: The tax payable at progressive rate.
     """
     tax = 0
 
     # Personal allowanceance progressive rate
     allowance = ALLOWANCE[marital_status]
 
+    # Calculate the Net Charagable Income (NCI)
     income = int(income) - allowance
     
     if income > 200000:
