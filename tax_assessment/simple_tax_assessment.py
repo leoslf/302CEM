@@ -1,6 +1,17 @@
+from __future__ import print_function
+
 import sys
+
+def eprint(*argv, **kwargs):
+    print (file=sys.stderr, *argv, **kwargs)
+
 if sys.version_info[0] < 3:
+    old_raw_input = raw_input
+    def raw_input(s):
+        eprint(s, end="")
+        return old_raw_input()
     input = raw_input
+
 
 MPF_THRESHOLD = 7100 * 12
 MPF_CONTRIBUTION = 0.05
@@ -10,20 +21,25 @@ STANDARD_TAX_RATE = 0.15
 ALLOWANCE = [132000, 264000]
 
 def get_marital_status():
-    while True:
-        marital_status = input("Please input your marital status. [Y/N]")
-        marital_status = marital_status[0].lower()
-        try:
-            marital_status = ["n", "y"].index(marital_status)
-        except ValueError:
-            print ("ValueError. Please input again")
-            continue
-        break
+    marital_status = input("Please input your marital status. [Y/N]")
+    marital_status = marital_status[0].lower()
+    
+    marital_status = ["n", "y"].index(marital_status)
+
+    """
+    try:
+        marital_status = ["n", "y"].index(marital_status)
+    except ValueError:
+        eprint ("ValueError. Please input again")
+        continue
+    """
     return marital_status
 
 
 def main(): # main function
-    division()
+    while True:
+        division()
+
 
 def deduction(incomes):
     return sum(map(mpf, incomes))
@@ -56,7 +72,7 @@ def division():
 
         print_tax("Joint", total_income, deduction(incomes), True)
 
-        print (values)
+        eprint(values)
 
         index = values.index(min(values))
         case_labels = [
@@ -76,16 +92,17 @@ def division():
         ]
 
 
-    print ("required tax: %.2f" % values[index])
-    print (case_labels[index])
+    eprint("required tax", end = "")
+    print (values[index])
+    eprint(case_labels[index])
         
 
     
 def print_tax(role, total_income, deductions, marital_status = False):
     income = total_income - deductions
-    print ("%s MPF is: %.2f" % (role, deductions))
-    print ("%s Tax in standard rate: %.2f" % (role, s_tax(income)))
-    print ("%s Tax in progressive rate: %.2f" % (role, tax(income, marital_status)))
+    eprint("%s MPF is: %.2f" % (role, deductions))
+    eprint("%s Tax in standard rate: %.2f" % (role, s_tax(income)))
+    eprint("%s Tax in progressive rate: %.2f" % (role, tax(income, marital_status)))
 
 
 def mpf(income):
