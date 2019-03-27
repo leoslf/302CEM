@@ -2,6 +2,13 @@ import sys
 if sys.version_info[0] < 3:
     input = raw_input
 
+MPF_THRESHOLD = 7100
+MPF_CONTRIBUTION = 0.05
+MPF_MAX = 18000
+STANDARD_TAX_RATE = 0.15
+
+ALLOWANCE = [132000, 264000]
+
 def main(): # main function
     while True:
         marital_status = input("Please input your marital status. [Y/N]")
@@ -61,46 +68,27 @@ def print_tax(role, income):
     print (role, "Tax (joint, progressive rate) is: %.2f" % tax(income, True))
 
 
-def monthly_mpf(income):
-    """ Mandatory Contribution """
-    mpf = 0
-    if income/12 >= 30000:
-        mpf = 1500
-    else:
-        mpf = income * 0.05
-        
-    return mpf
-
 def mpf(income):
-    return monthly_mpf(income) * 12
+    """ Mandatory Contribution """
+    if income < MPF_THRESHOLD:
+        return 0
+    return min(income * MPF_CONTRIBUTION, MPF_MAX)
 
-def s_tax(income, marital_status):
-    """ Standard Tax Rate Method """
-    tax = 0
-    allowance = 0
+def s_tax(income):
+    """ Standard Tax Rate Method
 
-    if marital_status:
-        allowance = 264000
-    else:
-        allowance = 132000
+    Personal Allowance standard rate
+    """
+    return income * STANDARD_TAX_RATE
 
-    tax = (income - allowance) * 0.15
-
-    if tax < 0:
-        tax = 0
-    return tax
-    #Personal Allowance standard reat
 
 def tax(income, marital_status):
-    """ Progressive Tax Rate Method """
+    """ Progressive Tax Rate Method
+    """
     tax = 0
-    allowance = 0
 
-    if marital_status:
-        allowance = 264000
-    else:
-        allowance = 132000
-    #Personal allowanceance progressive rate
+    # Personal allowanceance progressive rate
+    allowance = ALLOWANCE[marital_status]
 
     income = income - allowance
     
