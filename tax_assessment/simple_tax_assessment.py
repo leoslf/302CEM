@@ -11,11 +11,11 @@ def division(marital_status):
 
     if marital_status.lower() == "y":
         self_income = int(input("Please input your income > "))
-        print ("Personal MPF is:", mpf(self_income))
+        print ("Personal MPF is:", mpf(self_income)*12)
         print_tax("Personal", self_income)
         spouse_income = int(input("Please input spouse income >"))
        
-        print ("spouse MPF is:", mpf(spouse_income))
+        print ("spouse MPF is:", mpf(spouse_income)*12)
         print_tax("Spouse", spouse_income)
         
         a = s_tax(self_income, marital_status) + s_tax(spouse_income, marital_status),s_tax(self_income, "n") + s_tax(spouse_income, "n"), tax(self_income, marital_status) + tax(spouse_income, marital_status), tax(self_income, "n") + tax(spouse_income, "n")  
@@ -33,7 +33,7 @@ def division(marital_status):
         
     elif marital_status.lower() == "n":
         self_income = int(input("Please input your income > "))
-        print ("Personal MPF is:", mpf(self_income))
+        print ("Personal MPF is:", mpf(self_income)* 12)
         print ("Personal Tax (standard rate) is: %.2f" % s_tax(self_income, marital_status))
         print ("Personal Tax (progressive rate)is: %.2f" % tax(self_income, marital_status))
 
