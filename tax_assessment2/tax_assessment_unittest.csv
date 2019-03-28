@@ -1,17 +1,32 @@
-Case,self_income,spouse_income,self_mpf,spouse_mpf,self_NI,spouse_NI,expected_tax,marital_status
-No Husband Income & No Wife Income,0,0,0,0,0,0,0,y
-Low Husband Income & No Wife Income,2022000,0,18000,0,2004000,0,277800,y
-Middle Husband Income & No Wife Income,3144000,0,18000,0,3126000,0,468540,y
-High Husband Income & No Wife Income,9999999,0,18000,0,9981999,0,1497299,y
-No Husband Income & Low Wife Income,0,2022000,0,18000,0,2004000,277800,y
-Low Husband Income & Low Wife Income,2022000,2022000,18000,18000,2004000,2004000,600480,y
-Middle Husband Income & Low Wife Income,3144000,2022000,18000,18000,3126000,2004000,769140,y
-High Husband Income & Low Wife Income,9999999,2022000,18000,18000,9981999,2004000,1797539,y
-No Husband Income & Middle Wife Income,0,3144000,0,18000,0,3126000,468540,y
-Low Husband Income & Middle Wife Income,2022000,3144000,18000,18000,2004000,3126000,769140,y
-Middle Husband Income & Middle Wife Income,3144000,3144000,18000,18000,3126000,3126000,937800,y
-High Husband Income & Middle Wife Income,9999999,3144000,18000,18000,9981999,3126000,1966199,y
-No Husband Income & High Wife Income,0,9999999,0,18000,0,9981999,1497299,y
-Low Husband Income & High Wife Income,2022000,9999999,18000,18000,2004000,9981999,1797539,y
-Middle Husband Income & High Wife Income,3144000,9999999,18000,18000,3126000,9981999,1966199,y
-High Husband Income & High Wife Income,9999999,9999999,18000,18000,9981999,9981999,2994598,y
+Case,self_income,spouse_income,self_mpf,spouse_mpf,self_NI,spouse_NI,expected_tax,self_expected_standard_tax,spouse_expected_standard_tax,marital_status
+No Husband Income & No Wife Income,0,0,0,0,0,0,0,0,0,y
+Low Husband Income & No Wife Income,2022000,0,18000,0,2004000,0,277800,300600,0,y
+Middle Husband Income & No Wife Income,3144000,0,18000,0,3126000,0,468540,468900,0,y
+High Husband Income & No Wife Income,9999999,0,18000,0,9981999,0,1497299,1497299,0,y
+No Husband Income & Low Wife Income,0,2022000,0,18000,0,2004000,277800,0,300600,y
+Low Husband Income & Low Wife Income,2022000,2022000,18000,18000,2004000,2004000,600480,300600,300600,y
+Middle Husband Income & Low Wife Income,3144000,2022000,18000,18000,3126000,2004000,769140,468900,300600,y
+High Husband Income & Low Wife Income,9999999,2022000,18000,18000,9981999,2004000,1797539,1497299,300600,y
+No Husband Income & Middle Wife Income,0,3144000,0,18000,0,3126000,468540,0,468900,y
+Low Husband Income & Middle Wife Income,2022000,3144000,18000,18000,2004000,3126000,769140,300600,468900,y
+Middle Husband Income & Middle Wife Income,3144000,3144000,18000,18000,3126000,3126000,937800,468900,468900,y
+High Husband Income & Middle Wife Income,9999999,3144000,18000,18000,9981999,3126000,1966199,1497299,468900,y
+No Husband Income & High Wife Income,0,9999999,0,18000,0,9981999,1497299,0,1497299,y
+Low Husband Income & High Wife Income,2022000,9999999,18000,18000,2004000,9981999,1797539,300600,1497299,y
+Middle Husband Income & High Wife Income,3144000,9999999,18000,18000,3126000,9981999,1966199,468900,1497299,y
+High Husband Income & High Wife Income,9999999,9999999,18000,18000,9981999,9981999,2994598,1497299,1497299,y
+Poor Husband Income & No Wife Income,180000,0,9000,0,171000,0,0,25650,0,y
+Poor Husband Income & Poor Wife Income,180000,180000,9000,9000,171000,171000,1560,25650,25650,y
+Poor Husband Income & Low Wife Income,180000,2022000,9000,18000,171000,2004000,301020,25650,300600,y
+Poor Husband Income & Middle Wife Income,180000,3144000,9000,18000,171000,3126000,469680,25650,468900,y
+Poor Husband Income & High Wife Income,180000,9999999,9000,18000,171000,9981999,1498079,25650,1497299,y
+No Husband Income & Poor Wife Income,0,180000,0,9000,0,171000,0,0,25650,y
+Poor Husband Income & Poor Wife Income,180000,180000,9000,9000,171000,171000,1560,25650,25650,y
+Low Husband Income & Poor Wife Income,2022000,180000,18000,9000,2004000,171000,301020,300600,25650,y
+Middle Husband Income & Poor Wife Income,3144000,180000,18000,9000,3126000,171000,469680,468900,25650,y
+High Husband Income & Poor Wife Income,9999999,180000,18000,9000,9981999,171000,1498079,1497299,25650,y
+No Income Single,0,0,0,0,0,0,0,0,0,n
+Poor Income Single,180000,0,9000,0,171000,0,780,25650,0,n
+Low Income Single,2022000,0,18000,0,2004000,0,300240,300600,0,n
+Middle Income Single,3144000,0,18000,0,3126000,0,468900,468900,0,n
+High Income Single,9999999,0,18000,0,9981999,0,1497299,1497299,0,n

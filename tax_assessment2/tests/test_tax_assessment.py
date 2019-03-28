@@ -9,6 +9,7 @@ def cases():
 
 @pytest.mark.parametrize("case", cases())
 def test_run(case):
+    case["marital_status"] = ["n", "y"].index(case["marital_status"].lower())
     result = tax_calculation(case)
     print (result)
     print ("Combined Tax: %d", (result["self_tax"] + result["spouse_tax"]))
