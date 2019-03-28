@@ -10,13 +10,14 @@ def MPF(total_income):
         
 def net_income(total_income):
     """ Personal Net Income """
+    total_income = int(total_income)
     return total_income - MPF(total_income) 
 
 def NCI(net_income, combined = False):
     allowance = 132000
     if combined:
         allowance *= 2
-    return net_income - allowance
+    return max(net_income - allowance, 0)
 
 def standard_tax(net_income):
     return net_income * 0.15
@@ -36,8 +37,8 @@ def progressive_tax(nci):
 
 
 def tax_selection(net_income, combined = False):
-    standard = standard_tax(net_income)
-    progressive = progressive_tax(NCI(net_income, combined))
+    standard = int(standard_tax(net_income))
+    progressive = int(progressive_tax(NCI(net_income, combined)))
 
     return [standard, progressive], int(progressive < standard)
 
@@ -78,7 +79,7 @@ def tax_calculation(data):
     values, choice = tax_selection(net_income(data["self_income"] + data["spouse_income"]), combined = True)
     output["combined_tax"] = values[choice]
 
-    output["combined"] = output["combined_tax"]] < output["self_tax"] + output["spouse_tax"]
+    output["combined"] = output["combined_tax"] < output["self_tax"] + output["spouse_tax"]
 
     return output
     
@@ -98,7 +99,7 @@ def get_input():
     data["self_income"] = get_income("Your")
 
     marital_status = input("Marital Status: ")[0].lower()
-    data["marital_status"] = bool(["n", "y"].index(marital_status))
+    data["marital_status"] = ["n", "y"].index(marital_status)
 
     if data["marital_status"]:
         data["spouse_income"] = get_income("Spouse's")
