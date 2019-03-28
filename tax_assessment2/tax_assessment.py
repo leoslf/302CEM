@@ -65,7 +65,7 @@ def tax_calculation(data):
     """
 
     output = {
-        "marital_status": False,
+        "marital_status": data["marital_status"],
         "combined": False,
         "self_tax": 0,
         "spouse_tax": 0,
@@ -81,7 +81,8 @@ def tax_calculation(data):
     values, choice = tax_selection(net_income(data["self_income"]) + net_income(data["spouse_income"]), combined = True)
     output["combined_tax"] = values[choice]
 
-    output["combined"] = output["combined_tax"] < output["self_tax"] + output["spouse_tax"]
+    # decide whether combined_tax is chosen by comparing it with sum of seperated taxes (self_tax + spouse_tax)
+    output["combined"] = output["combined_tax"] < (output["self_tax"] + output["spouse_tax"])
 
     return output
     
@@ -108,12 +109,12 @@ def get_input():
 
     return data
 
-def show_ouput(result):
+def show_output(result):
     print ("Your seperate tax payable: %d" % result["self_tax"])
     if result["marital_status"]:
         print ("Spouse's seperate tax payable: %d" % result["spouse_tax"])
         print ("Joint Tax payable: %d" % result["combined_tax"])
-        print ("Suggest: %s" % ("Seperating" if not result["combined"] else "Combining"))
+        print ("Suggest: %s" % ("Combining" if result["combined"] else "Seperating"))
 
 
 
