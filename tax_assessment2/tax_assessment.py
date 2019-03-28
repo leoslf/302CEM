@@ -4,6 +4,7 @@ if sys.version_info[0] < 3:
     input = raw_input
 
 def MPF(total_income):
+    total_income = int(total_income)
     if total_income < 7100 * 12:
         return 0
     return min(18000, total_income * 0.05)
@@ -84,7 +85,7 @@ def tax_calculation(data):
     output["combined_tax"] = values[choice]
 
     # decide whether combined_tax is chosen by comparing it with sum of seperated taxes (self_tax + spouse_tax)
-    output["combined"] = output["combined_tax"] < (output["self_tax"] + output["spouse_tax"])
+    output["combined"] = output["marital_status"] and output["combined_tax"] < (output["self_tax"] + output["spouse_tax"])
 
     return output
     
