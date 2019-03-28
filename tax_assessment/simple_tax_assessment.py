@@ -88,7 +88,7 @@ def division():
 
         print_tax("Joint", sum(incomes), sum(map(deduction, incomes)), True)
 
-        eprint(values)
+        #eprint(values)
 
         index = values.index(min(values))
         case_labels = [
