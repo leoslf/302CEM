@@ -12,5 +12,7 @@ def test_run(case):
     result = tax_calculation(case)
     print (result)
     print ("Combined Tax: %d", (result["self_tax"] + result["spouse_tax"]))
+    print ("case")
+    print (case)
     assert int(case["expected_tax"]) == (result["combined_tax"] if result["combined"] else (result["self_tax"] + result["spouse_tax"]))
 
