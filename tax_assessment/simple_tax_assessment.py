@@ -75,7 +75,7 @@ def division():
         net_incomes = map(net_income, incomes)
         joint_net_income = sum(net_incomes) 
 
-        spouse_net_income = net_incomes
+        self_net_income, spouse_net_income = net_incomes
 
         values = map(int, [
             s_tax(self_net_income) + s_tax(spouse_net_income),
@@ -148,7 +148,7 @@ def s_tax(income):
         int: The tax payable at standard rate.
         
     """
-    return int(int(income) * STANDARD_TAX_RATE)
+    return int(income * STANDARD_TAX_RATE)
 
 
 def tax(income, marital_status):
