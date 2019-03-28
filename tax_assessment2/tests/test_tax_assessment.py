@@ -10,5 +10,7 @@ def cases():
 @pytest.mark.parametrize("case", cases())
 def test_run(case):
     result = tax_calculation(case)
+    print (result)
+    print ("Combined Tax: %d", (result["self_tax"] + result["spouse_tax"]))
     assert int(case["expected_tax"]) == (result["combined_tax"] if result["combined"] else (result["self_tax"] + result["spouse_tax"]))
 

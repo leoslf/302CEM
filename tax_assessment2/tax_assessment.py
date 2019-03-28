@@ -76,7 +76,7 @@ def tax_calculation(data):
     values, choice = tax_selection(net_income(data["spouse_income"]))
     output["spouse_tax"] = values[choice]
 
-    values, choice = tax_selection(net_income(data["self_income"] + data["spouse_income"]), combined = True)
+    values, choice = tax_selection(net_income(data["self_income"]) + net_income(data["spouse_income"]), combined = True)
     output["combined_tax"] = values[choice]
 
     output["combined"] = output["combined_tax"] < output["self_tax"] + output["spouse_tax"]
