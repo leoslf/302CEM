@@ -11,8 +11,6 @@ def MPF(total_income):
 def net_income(total_income):
     """ Personal Net Income """
     total_income = int(total_income)
-    print ("total, mpf", total_income, MPF(total_income))
-    print ("net_income: %d" % (total_income - MPF(total_income)))
     return total_income - MPF(total_income) 
 
 def NCI(net_income, combined = False):
