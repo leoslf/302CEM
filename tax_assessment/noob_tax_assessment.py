@@ -25,7 +25,11 @@ def division(marital_status):
         print ("spouse MPF is:", mpf(spouse_income))
         print_tax("Spouse", spouse_income, spouse_mpf)
         #output wife's tax & MPF
-        a = (s_tax(self_income, self_mpf) + s_tax(spouse_income, spouse_mpf)), (tax(join_income, "y", join_mpf)), (tax(self_income, "n", self_mpf) + tax(spouse_income, "n", spouse_mpf)), (s_tax(self_income, self_mpf) + tax(spouse_income, "n", spouse_mpf)), (tax(self_income, "n", self_mpf) + s_tax(spouse_income, spouse_mpf))      
+        a = (s_tax(self_income, self_mpf) + s_tax(spouse_income, spouse_mpf)), 
+        (tax(join_income, "y", join_mpf)), 
+        (tax(self_income, "n", self_mpf) + tax(spouse_income, "n", spouse_mpf)), 
+        (s_tax(self_income, self_mpf) + tax(spouse_income, "n", spouse_mpf)), 
+        (tax(self_income, "n", self_mpf) + s_tax(spouse_income, spouse_mpf))      
         
         if (s_tax(self_income, self_mpf) + s_tax(spouse_income, spouse_mpf)) == min(a):
             print ("Recommend separate assessment both using standard Tax Rate",min(a))   

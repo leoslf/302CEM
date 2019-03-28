@@ -60,6 +60,8 @@ def division():
     values = None
     index = -1
     case_labels = None
+    self_net_income = net_income(self_income)
+
 
     marital_status = get_marital_status()
     if marital_status:
@@ -73,7 +75,7 @@ def division():
         net_incomes = map(net_income, incomes)
         joint_net_income = sum(net_incomes) 
 
-        self_net_income, spouse_net_income = net_incomes
+        spouse_net_income = net_incomes
 
         values = map(int, [
             s_tax(self_net_income) + s_tax(spouse_net_income),
@@ -86,7 +88,7 @@ def division():
 
         print_tax("Joint", sum(incomes), sum(map(deduction, incomes)), True)
 
-        #eprint(values)
+        eprint(values)
 
         index = values.index(min(values))
         case_labels = [
@@ -101,7 +103,7 @@ def division():
 
         
     else:
-        values = map(int, [s_tax(self_income), tax(self_income, False)])
+        values = map(int, [s_tax(self_net_income), tax(self_net_income, False)])
         index = values.index(min(values))
         case_labels = [
             "Recommend Standard Tax Rate.",
