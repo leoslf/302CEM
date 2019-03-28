@@ -56,7 +56,9 @@ def tax_calculation(data):
         {
             "marital_status": bool,
             "combined": bool,
+            "self_mpf": int,
             "self_tax": int,
+            "spouse_mpf": int,
             "spouse_tax": int,
             "combined_tax": int,
         }
@@ -66,7 +68,9 @@ def tax_calculation(data):
         "marital_status": data["marital_status"],
         "combined": False,
         "self_tax": 0,
+        "self_mpf": MPF(data["self_income"]),
         "spouse_tax": 0,
+        "spouse_mpf": MPF(data["spouse_income"]),
         "combined_tax": 0,
     }
     
@@ -108,8 +112,10 @@ def get_input():
     return data
 
 def show_output(result):
+    print ("Your MPF: %d" % result["self_mpf"])
     print ("Your seperate tax payable: %d" % result["self_tax"])
     if result["marital_status"]:
+        print ("Spouse's MPF: %d" % result["spouse_mpf"])
         print ("Spouse's seperate tax payable: %d" % result["spouse_tax"])
         print ("Joint Tax payable: %d" % result["combined_tax"])
         print ("Suggest: %s" % ("Combining" if result["combined"] else "Seperating"))
