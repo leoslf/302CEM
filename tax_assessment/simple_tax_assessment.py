@@ -79,19 +79,23 @@ def division():
             s_tax(self_net_income) + s_tax(spouse_net_income),
             s_tax(joint_net_income),
             tax(joint_net_income, True),
-            tax(self_net_income, False) + tax(spouse_net_income, False)])
+            tax(self_net_income, False) + tax(spouse_net_income, False),
+            s_tax(self_net_income) + tax(spouse_net_income, False),
+            tax(self_net_income, False) + s_tax(spouse_net_income)])
 
 
         print_tax("Joint", sum(incomes), sum(map(deduction, incomes)), True)
 
-        eprint(values)
+        #eprint(values)
 
         index = values.index(min(values))
         case_labels = [
-            "Recommend separate assessment using standard Tax Rate",
-            "Recommend joint assessment using progressive Tax Rate",
-            "Recommend joint assessment using standard Tax Rate",
-            "Recommend separate assessment using progressive Tax Rate",
+            "Recommend separate assessment both using standard Tax Rate",
+            "Recommend joint assessment both using progressive Tax Rate",
+            "Recommend joint assessment both using standard Tax Rate",
+            "Recommend separate assessment both using progressive Tax Rate",
+            "Recommend separate assessment Husband using standard tax rate and wife using progressive tax rate",
+            "Recommend separate assessment Husband using progressive tax rate and wife using standard tax rate"
         ]
 
 
@@ -105,7 +109,7 @@ def division():
         ]
 
 
-    eprint("required tax", end = "")
+    eprint("Required Tax: ", end = "")
     print (values[index])
     eprint(case_labels[index])
         
