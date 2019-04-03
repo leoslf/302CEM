@@ -138,17 +138,11 @@ class Manufacturer(object):
 
         results = query("Material", "*, 0 AS qty", desc = True)
         materials, columns = results["rows"], results["columns"]
-        print (materials)
-        print (restocks)
-        print (consumptions)
         for material in materials:
             id = material["id"]
             restock_row = filter(lambda row: row["Material_id"] == id, restocks)[0]
             consumption_row = filter(lambda row: row["Material_id"] == id, consumptions)[0]
-            print (restock_row, consumption_row)
             material["qty"] = restock_row["qty"] - consumption_row["qty"]
-
-        print (materials)
 
         return materials, columns
     
