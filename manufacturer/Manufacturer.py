@@ -3,6 +3,7 @@ import sys
 import os
 import csv
 import json
+import datetime
 from collections import OrderedDict
 
 from db_connection import *
@@ -18,22 +19,20 @@ class Manufacturer(object):
     """ Manufacturer Data Handling System
     """
     def __init__(self, *argv):
-        if len(sys.argv) < 2:
-            eprint("USAGE: command input.csv [output.csv]")
+        _map = {
+            "input": self.input,
+            "inventory": self.inventory_query,
+        }
+        _map[argv[1]](*argv[2:])
+
+    def input(self, *argv):
+        if len(argv) < 1:
+            eprint("USAGE: command input input.csv [input2.csv [input3.csv ...]]")
             sys.exit(2)
 
-        input_filenames = argv[1:]
+        input_filenames = argv[2:]
         for input_filename in input_filenames:
             self.handle_inputfile(input_filename)
-
-        # if len(argv) > 2:
-        #     output_filename = argv[2]
-        #     assert output_filename.endswith(".csv")
-        #     # redirect stdout to output_filename
-        #     new_stdout = os.open(output_filename, os.O_WRONLY|os.O_CREAT|os.O_TRUNC)
-        #     os.dup2(new_stdout, STDOUT_FILENO)
-
-        
 
     def handle_inputfile(self, input_filename):
         assert input_filename.endswith(".csv")
@@ -128,6 +127,36 @@ class Manufacturer(object):
 
         output_filename = self.compose_filename(input_filename, "output")
         return self.write_csv(output_filename, fieldnames, logistics_requests)
+
+    def inventory(self, date = None):
+        # Default Today
+        if date is None:
+            date = datetime.date.today().strftime("%Y-%m-%d")
+
+        restocks = query("Restock", "Material_id, SUM(qty) AS qty", condition = "DATE(create_timestamp) < %s" % date, groupby = "Material_id")
+        consumptions = query("Consumption", "Material_id, SUM(qty) AS qty", condition = "DATE(create_timestamp) < %s" % date, groupby = "Material_id")
+
+        results = query("Material", "*, 0 AS qty", desc = True)
+        materials, columns = results["rows"], results["columns"]
+        for material in materials:
+            id = material["id"]
+            material["qty"] = restocks[id]["qty"] - consumptions[id]["qty"]
+
+        return materials, columns
+    
+    def inventory_query(self, filename = "inventory.csv", date = None):
+        debug("date: \"%r\"", date)
+        inventory, columns = self.inventory(date)
+        with open(filename, "w") as f:
+            writer = csv.DictWriter(f, fieldnames = columns)
+            
+            writer.writeheader()
+            writer.writerows(inventory)
+
+
+
+
+
 
 
         

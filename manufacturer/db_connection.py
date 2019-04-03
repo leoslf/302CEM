@@ -15,6 +15,33 @@ basicConfig(level = DEBUG)
 class OrderedDictCursor(DictCursorMixin, Cursor):
     dict_type = OrderedDict
 
+class SQL_Condition(object):
+    """ Binary Operator """
+    def __init__(self, operands):
+        self.operands = operands
+
+    @property
+    def separator(self):
+        if type(self) == SQL_Condition:
+            raise NotImplementedError("SQL_Condition must be subclassed")
+        return " %s " % type(self).__name__
+
+    def is_primitive(self, operand):
+        return isinstance(operand, SQL_Condition)
+
+    def parenthesize(self, operand):
+        return "(%s)" % operand
+
+    def __str__(self):
+        return self.parenthesize(self.separator.join(map(str, self.operands)))
+
+class AND(SQL_Condition):
+    pass
+
+class OR(SQL_Condition):
+    pass
+
+
 def db_conn():
     """get database connection"""
     conn = None
@@ -33,15 +60,20 @@ def query(table,
           join="",
           desc=False,
           orderby=None,
+          groupby="",
           filter=None,
           err_msg=None,
           *argv,
           **kwargs):
 
+    if groupby:
+        groupby = " GROUP BY %s" % groupby
+
     sql = "SELECT %s FROM %s" % (column, table) \
             + (" ORDER BY " + orderby if orderby is not None else "") \
             + (" WHERE " + condition if condition != "" else "") \
-            + (" INNER JOIN " + join if join != "" else "")
+            + (" INNER JOIN " + join if join != "" else "") \
+            + groupby 
     debug(sql)
 
     conn = db_conn()
