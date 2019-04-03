@@ -61,6 +61,7 @@ def query(table,
           desc=False,
           orderby=None,
           groupby="",
+          join_type = "INNER",
           filter=None,
           err_msg=None,
           *argv,
@@ -70,9 +71,9 @@ def query(table,
         groupby = " GROUP BY %s" % groupby
 
     sql = "SELECT %s FROM %s" % (column, table) \
-            + (" ORDER BY " + orderby if orderby is not None else "") \
+            + (" %s JOIN %s" % (join_type, join) if join != "" else "") \
             + (" WHERE " + condition if condition != "" else "") \
-            + (" INNER JOIN " + join if join != "" else "") \
+            + (" ORDER BY " + orderby if orderby is not None else "") \
             + groupby 
     debug(sql)
 

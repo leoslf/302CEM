@@ -133,14 +133,22 @@ class Manufacturer(object):
         if date is None:
             date = datetime.date.today().strftime("%Y-%m-%d")
 
-        restocks = query("Restock", "Material_id, SUM(qty) AS qty", condition = "DATE(create_timestamp) < %s" % date, groupby = "Material_id")
-        consumptions = query("Consumption", "Material_id, SUM(qty) AS qty", condition = "DATE(create_timestamp) < %s" % date, groupby = "Material_id")
+        restocks = query("Material AS m", "m.id AS Material_id, COALESCE(SUM(r.qty), 0) AS qty", join = "(SELECT * FROM Restock WHERE DATE(create_timestamp) <= '%s') AS r ON r.Material_id = m.id" % date, groupby = "m.id", join_type = "LEFT")
+        consumptions = query("Material AS m", "m.id AS Material_id, COALESCE(SUM(c.qty), 0) AS qty", join = "(SELECT * FROM Consumption WHERE DATE(create_timestamp) <= '%s') AS c ON c.Material_id = m.id" % date,  groupby = "m.id", join_type = "LEFT")
 
         results = query("Material", "*, 0 AS qty", desc = True)
         materials, columns = results["rows"], results["columns"]
+        print (materials)
+        print (restocks)
+        print (consumptions)
         for material in materials:
             id = material["id"]
-            material["qty"] = restocks[id]["qty"] - consumptions[id]["qty"]
+            restock_row = filter(lambda row: row["Material_id"] == id, restocks)[0]
+            consumption_row = filter(lambda row: row["Material_id"] == id, consumptions)[0]
+            print (restock_row, consumption_row)
+            material["qty"] = restock_row["qty"] - consumption_row["qty"]
+
+        print (materials)
 
         return materials, columns
     
