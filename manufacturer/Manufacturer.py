@@ -4,36 +4,29 @@ import os
 import csv
 import json
 import datetime
+
 from collections import OrderedDict
 
 from db_connection import *
-
-def eprint(*argv, **kwargs):
-    print (*argv, file=sys.stderr, **kwargs)
 
 STDIN_FILENO = 0
 STDOUT_FILENO = 1
 STDERR_FILENO = 2
 
+def eprint(*argv, **kwargs):
+    print (*argv, file=sys.stderr, **kwargs)
+
+
 class Manufacturer(object):
-    """ Manufacturer Data Handling System
-    """
+    """ Manufacturer Data Handling System """
     def __init__(self, *argv):
-        _map = {
-            "input": self.input,
-            "inventory": self.inventory_query,
-        }
-        _map[argv[1]](*argv[2:])
-
-    def input(self, *argv):
-        if len(argv) < 1:
-            eprint("USAGE: command input input.csv [input2.csv [input3.csv ...]]")
-            sys.exit(2)
-
-        input_filenames = argv[2:]
-        for input_filename in input_filenames:
-            self.handle_inputfile(input_filename)
-
+        # _map = {
+        #     "input": self.input,
+        #     "inventory": self.inventory_query,
+        # }
+        # _map[argv[1]](*argv[2:])
+        pass
+    
     def handle_inputfile(self, input_filename):
         assert input_filename.endswith(".csv")
         with open(input_filename) as f:
@@ -146,8 +139,7 @@ class Manufacturer(object):
 
         return materials, columns
     
-    def inventory_query(self, filename = "inventory.csv", date = None):
-        debug("date: \"%r\"", date)
+    def inventory_query(self, filename, date):
         inventory, columns = self.inventory(date)
         with open(filename, "w") as f:
             writer = csv.DictWriter(f, fieldnames = columns)
