@@ -1,4 +1,6 @@
 import click
+import itertools
+from terminaltables import DoubleTable
 from Manufacturer import *
 
 @click.group()
@@ -12,8 +14,17 @@ def input(ctx, *argv, **kwargs):
     ctx.obj.handle_inputfile(*argv, **kwargs)
 
 @cli.command()
-@click.option("--output", "-o", "filename", default = "inventory.csv")
 @click.option("--date", "-d", "date", default = None)
+@click.option("--print", "-p", "dump", is_flag=True)
+@click.option("--output", "-o", "filename", default = "inventory.csv")
 @click.pass_context
-def inventory(ctx, *argv, **kwargs):
-    ctx.obj.inventory_query(*argv, **kwargs)
+def inventory(ctx, date, dump, filename):
+    data, columns = ctx.obj.inventory(date)
+    if dump:
+        # dump to terminal
+        table = DoubleTable([columns] + list(map(lambda row: row.values(), data)), title="Inventory")
+        print (table.table)
+    else:
+        write_csv(filename, columns, data)
+        
+        

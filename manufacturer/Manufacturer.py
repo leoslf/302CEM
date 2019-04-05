@@ -16,6 +16,12 @@ STDERR_FILENO = 2
 def eprint(*argv, **kwargs):
     print (*argv, file=sys.stderr, **kwargs)
 
+def write_csv(filename, columns, data):
+    with open(filename, "w") as f:
+        writer = csv.DictWriter(f, fieldnames = columns)
+        
+        writer.writeheader()
+        writer.writerows(data)
 
 class Manufacturer(object):
     """ Manufacturer Data Handling System """
@@ -139,28 +145,3 @@ class Manufacturer(object):
 
         return materials, columns
     
-    def inventory_query(self, filename, date):
-        inventory, columns = self.inventory(date)
-        with open(filename, "w") as f:
-            writer = csv.DictWriter(f, fieldnames = columns)
-            
-            writer.writeheader()
-            writer.writerows(inventory)
-
-
-
-
-
-
-
-        
-
-
-
-        
-
-
-
-
-
-            

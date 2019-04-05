@@ -10,7 +10,7 @@ import re
 import pymysql
 from pymysql.cursors import DictCursorMixin, Cursor
 
-basicConfig(level = DEBUG)
+# basicConfig(level = DEBUG)
 
 class OrderedDictCursor(DictCursorMixin, Cursor):
     dict_type = OrderedDict
