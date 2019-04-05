@@ -9,16 +9,8 @@ from collections import OrderedDict
 from db_connection import *
 from utils import *
 
-
 class Manufacturer(object):
     """ Manufacturer Data Handling System """
-    def __init__(self, *argv):
-        # _map = {
-        #     "input": self.input,
-        #     "inventory": self.inventory_query,
-        # }
-        # _map[argv[1]](*argv[2:])
-        pass
     
     def handle_inputfile(self, input_filename):
         assert input_filename.endswith(".csv")
