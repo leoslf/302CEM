@@ -1,3 +1,4 @@
+# -*- coding: UTF-8 -*-# enable debugging
 import sys
 import os
 import csv
@@ -15,45 +16,95 @@ class Manufacturer(object):
     def handle_inputfile(self, input_filename):
         assert input_filename.endswith(".csv")
         with open(input_filename) as f:
-            # reader = csv.reader(f)
-            # table = [row for row in reader]
-            # eprint(table)
             reader = csv.DictReader(f)
             table = list(reader)
-        eprint(table)
+
+        # eprint(table)
 
         errmsg = []
-        ids = []
+        request_ids = []
         fieldnames = ["id"]
+
+        connection = database_connection()
         try:
             for row in table:
-                id = insert("Request", values = row, errmsg = errmsg)
+                id = insert("Request", values = row, errmsg = errmsg, connection = connection)
                 if id == -1:
                     raise RuntimeError("cannot insert row: %s" % row, "Error: %s" % ", ".join(map(str, errmsg)))
-                ids.append({"id": id})
+                request_ids.append({"id": id})
+
+            connection.commit()
         finally:
-            self.write_resultfile(input_filename, fieldnames, ids)
-            self.write_request(input_filename, ids)
+            connection.close()
+
+        # Produce each request
+        for request in request_ids:
+            request = query("Request", condition = "id = %d" % request["id"])[0]
+            product_id, qty = int(request["Product_id"]), int(request["qty"])
+            self.produce(product_id, qty)
+
+        self.write_resultfile(input_filename, fieldnames, request_ids)
+        self.write_request(input_filename, request_ids)
+
+    def produce(self, product_id, qty):
+        info("Producing product: (id: %d) x %d", product_id, qty)
+
+        # check inventory
+        inventory, _ = self.inventory()
+        recipe = self.product_recipe(product_id, qty)
+
+        required_materials = list(filter(lambda row: row["id"] in recipe.keys(), inventory))
+
+        # check if there are materials out of stock
+        for material in required_materials:
+            material_id = int(material["id"])
+
+            # Restock if not enough
+            material_qty = material["qty"]
+            material_qty -= recipe[material_id]
+            if material_qty < 0:
+                self.restock(material_id, -material_qty)
+
+        connection = database_connection()
+
+
+        rc = insert("Production", values = {"Product_id": product_id, "qty": qty}, connection = connection)
+        if rc < 0:
+            raise RuntimeError("Failed to insert product (id: %d) with qty %d" % (product_id, qty))
+
+        for material_id, qty in recipe.items():
+            rc = insert("Consumption", values = {"Production_id": rc, "Material_id": material_id, "qty": qty}, connection = connection)
+            if rc < 0:
+                raise RuntimeError("Failed to insert consumption (product_id: %d, material_id: %d) with qty %d" % (product_id, material_id, qty))
+
+        connection.commit()
+        connection.close()
+
+
+
+    def product_recipe(self, product_id, qty = 1):
+        results = query("Recipe", "Material_id, SUM(qty * %d) AS qty" % qty, condition = "Product_id = '%d'" % product_id)
+        return {row["Material_id"]: row["qty"] for row in results}
+
+
+    def restock(self, material_id, qty, buffer_qty = 100):
+        info("Restock: material %d", material_id)
+        errmsg = []
+        rc = insert("Restock", values = {"Material_id": material_id, "qty": qty + buffer_qty}, errmsg = errmsg)
+        if rc < 0:
+            raise RuntimeError("Failed to restock material (id: %d), errmsg: %s", material_id, ", ".join(map(str, errmsg)))
 
 
     def write_resultfile(self, input_filename, fieldnames, rows):
         output_filename = self.compose_filename(input_filename, "result")
-        eprint("writing: %s" % output_filename)
-        return self.write_csv(output_filename, fieldnames, rows)
+        info("writing: %s", output_filename)
+        return write_csv(output_filename, fieldnames, rows)
 
     @classmethod
     def compose_filename(self, input_filename, insert_str):
-        assert type(input_filename) == str
         tmp = input_filename.split(".")
         tmp.insert(-1, insert_str)
         return ".".join(tmp)
-
-    @classmethod
-    def write_csv(cls, filename, fieldnames, rows):
-        with open(filename, "w") as f:
-            writer = csv.DictWriter(f, fieldnames)
-            writer.writeheader()
-            writer.writerows(rows)
 
     def write_request(self, input_filename, request_ids):
         """ output request to logistics company
@@ -69,7 +120,11 @@ class Manufacturer(object):
         logistics_request_ids = []
         errmsg = []
         for row in request_ids:
-            logistics_request_id = insert_by_query("Logistics_Request", columns, "SELECT SUM(r.qty), SUM(r.qty * p.weight), r.Customer_id FROM Request as r INNER JOIN Product AS p ON r.Product_id = p.id WHERE r.id = %d GROUP BY r.Product_id, r.Customer_id" % row["id"], errmsg = errmsg)
+            logistics_request_id = insert("Logistics_Request", columns, select_stmt = (
+                "SELECT SUM(r.qty), SUM(r.qty * p.weight), r.Customer_id "
+                "FROM Request as r "
+                "INNER JOIN Product AS p ON r.Product_id = p.id "
+                "WHERE r.id = %d GROUP BY r.Product_id, r.Customer_id") % row["id"], errmsg = errmsg)
             if logistics_request_id < 1:
                 raise RuntimeError("cannot insert row: %s" % row, "Error: %s" % ", ".join(map(str, errmsg)))
             logistics_request_ids.append(logistics_request_id)
@@ -91,7 +146,7 @@ class Manufacturer(object):
 
 
         output_filename = self.compose_filename(input_filename, "output")
-        return self.write_csv(output_filename, fieldnames, logistics_requests)
+        return write_csv(output_filename, fieldnames, logistics_requests)
 
     def inventory(self, date = None):
         # Default Today

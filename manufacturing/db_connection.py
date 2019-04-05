@@ -11,6 +11,7 @@ import pymysql
 from pymysql.cursors import DictCursorMixin, Cursor
 
 # basicConfig(level = DEBUG)
+basicConfig(level = INFO)
 
 class OrderedDictCursor(DictCursorMixin, Cursor):
     dict_type = OrderedDict
@@ -42,17 +43,13 @@ class OR(SQL_Condition):
     pass
 
 
-def db_conn():
+def database_connection(connection=None, autocommit=False):
     """get database connection"""
-    conn = None
+    if connection:
+        return connection
 
-    try:
-        conn = pymysql.connect(cursorclass=OrderedDictCursor, **database_credential.db)
-    except Exception as e:
-        error("Exception:" + str(e) + "<br />")
-        error("cannot get DB connection<br />")
+    return pymysql.connect(cursorclass=OrderedDictCursor, autocommit=autocommit, **database_credential.db)
 
-    return conn
 
 def query(table,
           column="*",
@@ -77,8 +74,7 @@ def query(table,
             + groupby 
     debug(sql)
 
-    conn = db_conn()
-    assert(conn is not None)
+    conn = database_connection()
 
     try:
         with conn.cursor() as cursor:
@@ -112,8 +108,7 @@ def column_enum(table, column):
         FROM information_schema.`COLUMNS` 
         WHERE TABLE_NAME = '%s' AND COLUMN_NAME = '%s'""" % (table, column)
     
-    conn = db_conn()
-    assert(conn is not None)
+    conn = database_connection()
 
     try:
         with conn.cursor() as cursor:
@@ -139,81 +134,64 @@ def insert(table,
            columns="",
            values="",
            errmsg=None,
+           connection=None,
+           select_stmt = None,
            *argv,
            **kwargs):
 
-    if columns == "" and isinstance(values, dict):
-        columns = "(" + ", ".join(map(str, values.keys())) + ")"
-        values = ", ".join(["'%s'" % x for x in values.values()])
+    if isinstance(values, dict):
+        columns = "(%s)" % ", ".join(map(str, values.keys()))
+        values = "(%s)" % ", ".join(["'%s'" % x for x in values.values()])
 
-    elif columns != "" and isinstance(values, str):
+    elif columns != "" and (isinstance(values, str) or select_stmt is not None):
         # comma delimited string
-        columns = "("+ columns +")"
+        if isinstance(columns, list):
+            columns = ", ".join(map(str, columns))
+        columns = "(%s)" % columns
+
     elif isinstance(values, list):
-        values = ", ".join(["'%s'" % x for x in values])
+        if type(values[0]) != list:
+            values = [values]
+        values = ", ".join(["(%s)" % ", ".join(map(str, ["'%s'" % x for x in row])) for row in values])
     else:
         if errmsg is not None and errmsg is list:
             errmsg.append("values provided is neither dictionary with columns nor string paired with columns nor list paired with columns")
         return -1
 
-    sql = "INSERT INTO " + table + " " \
-            + columns \
-            + " VALUE ("+ values +")"
+    source = select_stmt if select_stmt is not None else "VALUES %s" % values
+
+    sql = "INSERT INTO %(table)s %(columns)s %(source)s" % {
+                "table": table,
+                "columns": columns,
+                "source": source,
+            }
     debug(sql)
 
-    conn = db_conn()
-    assert(conn is not None)
+    conn = database_connection(connection)
+
+    assert conn is not None
 
     try:
         with conn.cursor() as cursor:
             cursor.execute(sql)
-            conn.commit()
             return cursor.lastrowid
     except Exception as e:
         msg = "MYSQLError: errno %r, %r" % (e.args[0], e)
         if errmsg is not None:
             errmsg.append(msg)
-        # error(msg)
+        error(msg)
     finally:
-        conn.close()
-
-    return -1
-
-def insert_by_query(table,
-                    columns,
-                    select_stmt,
-                    errmsg = None):
-    if isinstance(columns, list) and isinstance(columns[0], str):
-        columns = ", ".join(map(str, columns))
-    assert isinstance(columns, str)
-    assert isinstance(select_stmt, str)
-
-    sql = "INSERT INTO %s (%s) %s" % (table, columns, select_stmt)
-    debug(sql)
-
-    conn = db_conn()
-    assert conn
-
-    try:
-        with conn.cursor() as cursor:
-            cursor.execute(sql)
+        if connection is None:
             conn.commit()
-            return cursor.lastrowid
-    except Exception as e:
-        msg = "MYSQLError: errno %r, %r" % (e.args[0], e)
-        if errmsg is not None:
-            errmsg.append(msg)
-        # error(msg)
-    finally:
-        conn.close()
+            conn.close()
 
     return -1
-
 
 def update(table,
            values,
            condition="",
            errmsg=None,
+           connection=None,
            *argv,
            **kwargs):
 
@@ -225,28 +203,28 @@ def update(table,
 
     debug(sql)
     
-    conn = db_conn()
-    assert(conn is not None)
+    conn = database_connection(connection)
 
     try:
         with conn.cursor() as cursor:
             cursor.execute(sql)
-            conn.commit()
             return cursor.rowcount
     except Exception as e:
         msg = "MYSQLError: errno %r, %r" % (e.args[0], e)
         if errmsg is not None:
             errmsg.append(msg)
-        debug(msg)
-        # error(msg)
+        error(msg)
     finally:
-        conn.close()
+        if connection is None:
+            conn.commit()
+            conn.close()
 
     return -1
 
 def delete(table,
            condition="",
            errmsg=None,
+           connection=None,
            *argv,
            **kwargs):
     
@@ -254,20 +232,20 @@ def delete(table,
             + ((" WHERE " + condition) if condition != "" else ""))
     debug(sql)
     
-    conn = db_conn()
-    assert(conn is not None)
+    conn = database_connection(connection)
 
     try:
         with conn.cursor() as cursor:
             cursor.execute(sql)
-            conn.commit()
             return cursor.rowcount
     except Exception as e:
         msg = "MYSQLError: errno %r, %r" % (e.args[0], e)
         if errmsg is not None:
             errmsg.append(msg)
-        # error(msg)
+        error(msg)
     finally:
-        conn.close()
+        if connection is None:
+            conn.commit()
+            conn.close()
 
     return -1

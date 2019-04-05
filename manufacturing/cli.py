@@ -9,9 +9,11 @@ def cli(ctx):
     ctx.obj = Manufacturer()
 
 @cli.command()
-@click.option("--file", "-f", required=True, type=str)
-def input(ctx, *argv, **kwargs):
-    ctx.obj.handle_inputfile(*argv, **kwargs)
+@click.option("--file", "-f", "input_filename", required=True, type=str)
+@click.pass_context
+def input(ctx, input_filename):
+    ctx.obj.handle_inputfile(input_filename)
+    click.echo("Successful request input")
 
 @cli.command()
 @click.option("--date", "-d", "date", default = None)
@@ -26,4 +28,8 @@ def inventory(ctx, date, dump, filename):
     else:
         write_csv(filename, columns, data)
         
-        
+@cli.command()
+@click.option("--type", "table", required=True, type=click.Choice(["Logistics_Request_View", "Restock", "Production", "Consumption"]))
+def history(table):
+    results = query(table, desc=True)
+    print (terminaltable(results["columns"], results["rows"], title = table.capitalize()))
