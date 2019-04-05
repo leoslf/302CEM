@@ -40,18 +40,19 @@ class Manufacturer(object):
         # Produce each request
         for request in request_ids:
             request = query("Request", condition = "id = %d" % request["id"])[0]
-            product_id, qty = int(request["Product_id"]), int(request["qty"])
+            product_id, qty = request["Product_id"], int(request["qty"])
             self.produce(product_id, qty)
 
         self.write_resultfile(input_filename, fieldnames, request_ids)
         self.write_request(input_filename, request_ids)
 
     def produce(self, product_id, qty):
-        info("Producing product: (id: %d) x %d", product_id, qty)
+        info("Producing product: (id: %s) x %d", product_id, qty)
 
         # check inventory
         inventory, _ = self.inventory()
         recipe = self.product_recipe(product_id, qty)
+        debug(recipe)
 
         required_materials = list(filter(lambda row: row["id"] in recipe.keys(), inventory))
 
@@ -68,14 +69,14 @@ class Manufacturer(object):
         connection = database_connection()
 
 
-        rc = insert("Production", values = {"Product_id": product_id, "qty": qty}, connection = connection)
-        if rc < 0:
-            raise RuntimeError("Failed to insert product (id: %d) with qty %d" % (product_id, qty))
+        production_id = insert("Production", values = {"Product_id": product_id, "qty": qty}, connection = connection)
+        if production_id < 0:
+            raise RuntimeError("Failed to insert product (id: %s) with qty %d" % (product_id, qty))
 
         for material_id, qty in recipe.items():
-            rc = insert("Consumption", values = {"Production_id": rc, "Material_id": material_id, "qty": qty}, connection = connection)
+            rc = insert("Consumption", values = {"Production_id": production_id, "Material_id": material_id, "qty": qty}, connection = connection)
             if rc < 0:
-                raise RuntimeError("Failed to insert consumption (product_id: %d, material_id: %d) with qty %d" % (product_id, material_id, qty))
+                raise RuntimeError("Failed to insert consumption (product_id: %s, material_id: %d) with qty %d" % (product_id, material_id, qty))
 
         connection.commit()
         connection.close()
@@ -83,8 +84,8 @@ class Manufacturer(object):
 
 
     def product_recipe(self, product_id, qty = 1):
-        results = query("Recipe", "Material_id, SUM(qty * %d) AS qty" % qty, condition = "Product_id = '%d'" % product_id)
-        return {row["Material_id"]: row["qty"] for row in results}
+        results = query("Recipe", condition = "Product_id = '%s'" % product_id)
+        return {row["Material_id"]: row["qty"] * qty for row in results}
 
 
     def restock(self, material_id, qty, buffer_qty = 100):
