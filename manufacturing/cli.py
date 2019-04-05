@@ -29,7 +29,7 @@ def inventory(ctx, date, dump, filename):
         write_csv(filename, columns, data)
         
 @cli.command()
-@click.option("--type", "table", required=True, type=click.Choice(["Logistics_Request_View", "Restock", "Production", "Consumption"]))
+@click.option("--type", "table", required=True, type=click.Choice(["Logistics_Request_View", "Logistics_Request", "Restock", "Production", "Consumption", "Recipe"]))
 def history(table):
     results = query(table, desc=True)
     print (terminaltable(results["columns"], results["rows"], title = table.capitalize()))
