@@ -22,8 +22,7 @@ def inventory(ctx, date, dump, filename):
     data, columns = ctx.obj.inventory(date)
     if dump:
         # dump to terminal
-        table = DoubleTable([columns] + list(map(lambda row: row.values(), data)), title="Inventory")
-        print (table.table)
+        print (terminaltable(columns, data, title = "Inventory"))
     else:
         write_csv(filename, columns, data)
         

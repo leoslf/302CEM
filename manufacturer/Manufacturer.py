@@ -1,4 +1,3 @@
-from __future__ import print_function
 import sys
 import os
 import csv
@@ -8,20 +7,8 @@ import datetime
 from collections import OrderedDict
 
 from db_connection import *
+from utils import *
 
-STDIN_FILENO = 0
-STDOUT_FILENO = 1
-STDERR_FILENO = 2
-
-def eprint(*argv, **kwargs):
-    print (*argv, file=sys.stderr, **kwargs)
-
-def write_csv(filename, columns, data):
-    with open(filename, "w") as f:
-        writer = csv.DictWriter(f, fieldnames = columns)
-        
-        writer.writeheader()
-        writer.writerows(data)
 
 class Manufacturer(object):
     """ Manufacturer Data Handling System """
@@ -75,19 +62,6 @@ class Manufacturer(object):
             writer = csv.DictWriter(f, fieldnames)
             writer.writeheader()
             writer.writerows(rows)
-
-    @classmethod
-    def dup2(cls, filename, fileno):
-        """ syscall dup2
-
-        Redirect fileno to filename
-        
-        :param filename: filename to be dup into fileno
-        :param fileno: file descriptor number
-
-        """
-        new_stdout = os.open(filename, os.O_WRONLY | os.O_CREAT | os.O_TRUNC)
-        os.dup2(new_stdout, fileno)
 
     def write_request(self, input_filename, request_ids):
         """ output request to logistics company
