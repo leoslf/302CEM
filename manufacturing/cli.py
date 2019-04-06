@@ -9,13 +9,11 @@ def cli(ctx):
     """ IT9 Manufacturing Company Internal System.
     
     \b
-    ### #######  #####  
-     #     #    #     # 
-     #     #    #     # 
-     #     #     ###### 
-     #     #          # 
-     #     #    #     # 
-    ###    #     #####  
+         ___ _____ ___  
+        |_ _|_   _/ _ \ 
+         | |  | || (_) |
+         | |  | | \__, |
+        |___| |_|   /_/ 
     """
     ctx.obj = Manufacturer()
 
