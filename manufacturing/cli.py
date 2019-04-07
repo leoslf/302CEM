@@ -6,7 +6,7 @@ from Manufacturer import *
 @click.group()
 @click.pass_context
 def cli(ctx):
-    """ IT9 Manufacturing Company Internal System.
+    """ IT9 Manufacturing Limited Internal System.
     
     \b
          ___ _____ ___  
