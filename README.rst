@@ -1,13 +1,16 @@
 302CEM Agile Development
 ========================
 
+
+Group Project: Manufacturer Role
+--------------------------------
+
 - Manufacturer Data Format
 
   - Database schema: dataformat_v3.sql
 
-
 Explaination
-------------
+~~~~~~~~~~~~
 
 - Manufacturer is:
 
@@ -17,3 +20,13 @@ Explaination
 - Powerpoint:
 
   - https://docs.google.com/presentation/d/1NJ9geEJUHZYSgFqvPeHhfAv1qeqHEwL1uieG5F_5uno/edit?usp=sharing
+
+Pair Programming: Tax Assessment
+--------------------------------
+
+- We have two pair programming groups and thus two set of works
+
+  - tax_assessment
+  - tax_assessment2
+
+

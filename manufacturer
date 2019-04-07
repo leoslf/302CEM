@@ -1,0 +1,2 @@
+#!/usr/bin/env bash
+python2 $(dirname $0)/manufacturing $@
