@@ -1,9 +1,21 @@
 302CEM Agile Development
 ========================
 
+
+Group Project: Manufacturer Role
+--------------------------------
+
 - Manufacturer Data Format
 
   - Sample Data
+
+Pair Programming: Tax Assessment
+--------------------------------
+
+- We have two pair programming groups and thus two set of works
+
+  - tax_assessment
+  - tax_assessment2
 
 
 Explaination
