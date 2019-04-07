@@ -3,7 +3,7 @@
 
 - Manufacturer Data Format
 
-  - Sample Data
+  - Database schema: dataformat_v3.sql
 
 
 Explaination
