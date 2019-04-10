@@ -41,12 +41,12 @@ class Manufacturer(object):
         for request in request_ids:
             request = query("Request", condition = "id = %d" % request["id"])[0]
             product_id, qty = request["Product_id"], int(request["qty"])
-            self.produce(product_id, qty)
+            self.produce(product_id, qty, request["id"])
 
         self.write_resultfile(input_filename, fieldnames, request_ids)
         self.write_request(input_filename, request_ids)
 
-    def produce(self, product_id, qty):
+    def produce(self, product_id, qty, request_id):
         info("Producing product: (id: %s) x %d", product_id, qty)
 
         # check inventory
@@ -69,7 +69,7 @@ class Manufacturer(object):
         connection = database_connection()
 
 
-        production_id = insert("Production", values = {"Product_id": product_id, "qty": qty}, connection = connection)
+        production_id = insert("Production", values = {"Product_id": product_id, "qty": qty, "Request_id": request_id}, connection = connection)
         if production_id < 0:
             raise RuntimeError("Failed to insert product (id: %s) with qty %d" % (product_id, qty))
 
@@ -112,26 +112,32 @@ class Manufacturer(object):
 
         :param request_ids: list of dictionaries containing the primary keys of different rows to be processed
         """
-        dummy_PK = ""
-        dummy_customer = query("Customer", condition = "id = '%s'" % dummy_PK)[0]
-        # eprint(results)
-
         columns = ["quantity", "weight", "customer_id"]
 
-        logistics_request_ids = []
         errmsg = []
-        for row in request_ids:
-            logistics_request_id = insert("Logistics_Request", columns, select_stmt = (
-                "SELECT SUM(r.qty), SUM(r.qty * p.weight), r.Customer_id "
-                "FROM Request as r "
-                "INNER JOIN Product AS p ON r.Product_id = p.id "
-                "WHERE r.id = %d GROUP BY r.Product_id, r.Customer_id") % row["id"], errmsg = errmsg)
-            if logistics_request_id < 1:
-                raise RuntimeError("cannot insert row: %s" % row, "Error: %s" % ", ".join(map(str, errmsg)))
-            logistics_request_ids.append(logistics_request_id)
 
-        errmsg = []
-        d = query("Logistics_Request_View", condition = " %s" % (" OR ".join(["id = %d" % id for id in logistics_request_ids])), desc=True, errmsg = errmsg)
+        connection = database_connection()
+
+        # NOTE: Safely assume that there should only be a single customer id
+        logistics_request_id = insert("Logistics_Request", columns, select_stmt = (
+            "SELECT SUM(r.qty), SUM(r.qty * p.weight), r.Customer_id "
+            "FROM Request as r "
+            "INNER JOIN Product AS p ON r.Product_id = p.id "
+            "WHERE %s GROUP BY r.Customer_id") % OR(REL("r.id = %d", keyreduce(request_ids, "id"))), errmsg = errmsg, connection = connection)
+
+        if logistics_request_id < 1:
+            raise RuntimeError("cannot insert row: %s" % row, "Error: %s" % ", ".join(map(str, errmsg)))
+
+        for request_id in keyreduce(request_ids, "id"):
+            value = {"Logistics_Request_id": logistics_request_id, "Request_id": request_id}
+            rel_id = insert("Logistics_Request_Request", values = value, errmsg = errmsg, connection = connection)
+            if rel_id < 0:
+                raise RuntimeError("Cannot insert relation: %r, errmsg: %s" % (value, ";".join(map(str, errmsg))))
+
+        connection.commit()
+        connection.close()
+
+        d = query("Logistics_Request_View", condition = "id = %d" % logistics_request_id, desc=True, errmsg=errmsg)
         if d is None:
             raise RuntimeError("failed to query the list of requests, %s" % ", ".join(map(str, errmsg)))
         logistics_requests, fieldnames = d["rows"], d["columns"]
@@ -140,11 +146,9 @@ class Manufacturer(object):
 
         fieldnames = [col for col in fieldnames if col not in pop_fields]
 
-
         for row in logistics_requests:
             for pop_field in pop_fields:
                 row.pop(pop_field, None)
-
 
         output_filename = self.compose_filename(input_filename, "output")
         return write_csv(output_filename, fieldnames, logistics_requests)

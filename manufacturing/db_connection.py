@@ -2,9 +2,9 @@
 # -*- coding: UTF-8 -*-# enable debugging
 
 import sys
-import database_credential
 from logging import *
 import traceback
+import operator
 from collections import OrderedDict
 import re
 import pymysql
@@ -16,10 +16,17 @@ from pymysql.cursors import DictCursorMixin, Cursor
 class OrderedDictCursor(DictCursorMixin, Cursor):
     dict_type = OrderedDict
 
+def keyreduce(sequence, key):
+    """ Get list of values from list of dictionaries by key """
+    return list(map(operator.itemgetter(key), sequence))
+
 class SQL_Condition(object):
     """ Binary Operator """
     def __init__(self, operands):
-        self.operands = operands
+        self.operands = list(map(self.handle_operand, operands))
+
+    def handle_operand(self, operand):
+        return operand
 
     @property
     def separator(self):
@@ -32,6 +39,9 @@ class SQL_Condition(object):
 
     def parenthesize(self, operand):
         return "(%s)" % operand
+    
+    def __iter__(self):
+        return iter([self])
 
     def __str__(self):
         return self.parenthesize(self.separator.join(map(str, self.operands)))
@@ -42,13 +52,21 @@ class AND(SQL_Condition):
 class OR(SQL_Condition):
     pass
 
+class REL(SQL_Condition):
+    """ Relational Operator """
+    def __init__(self, fmt, *argv, **kwargs):
+        self.fmt = fmt
+        super(REL, self).__init__(*argv, **kwargs)
+
+    def handle_operand(self, operand):
+        return self.fmt % operand
 
 def database_connection(connection=None, autocommit=False):
     """get database connection"""
     if connection:
         return connection
 
-    return pymysql.connect(cursorclass=OrderedDictCursor, autocommit=autocommit, **database_credential.db)
+    return pymysql.connect(cursorclass=OrderedDictCursor, autocommit=autocommit, **credential)
 
 
 def query(table,

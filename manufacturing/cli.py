@@ -38,6 +38,13 @@ def inventory(ctx, date, dump, filename):
         print (terminaltable(columns, data, title = "Inventory"))
     else:
         write_csv(filename, columns, data)
+
+@cli.command()
+@click.option("--customer", "-c", "customer_id", prompt=True, type=int)
+def lookup(customer_id):
+    results = query("Request_View", condition = "Customer_id = '%012d'" % customer_id, desc=True)
+    print (terminaltable(results["columns"], results["rows"], title="Invoice Lookup"))
+
         
 @cli.command(short_help = "History View")
 @click.option("--type", "table", required=True, type=click.Choice(["Logistics_Request_View", "Logistics_Request", "Restock", "Production", "Consumption", "Recipe"]))
