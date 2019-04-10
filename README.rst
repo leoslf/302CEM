@@ -7,7 +7,7 @@ Group Project: Manufacturer Role
 
 - Manufacturer Data Format
 
-  - See: dataformat_v2.sql
+  - Database schema: dataformat_v3.sql
 
 Explaination
 ~~~~~~~~~~~~
