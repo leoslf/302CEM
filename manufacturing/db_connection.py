@@ -5,6 +5,7 @@ import sys
 from logging import *
 import traceback
 import operator
+import database_credential
 from collections import OrderedDict
 import re
 import pymysql
@@ -65,8 +66,9 @@ def database_connection(connection=None, autocommit=False):
     """get database connection"""
     if connection:
         return connection
+    # TODO: reference to envvar
 
-    return pymysql.connect(cursorclass=OrderedDictCursor, autocommit=autocommit, **credential)
+    return pymysql.connect(cursorclass=OrderedDictCursor, autocommit=autocommit, **database_credential.db)
 
 
 def query(table,
