@@ -2,6 +2,7 @@ import click
 import itertools
 from terminaltables import DoubleTable
 from Manufacturer import *
+from gui import *
 
 @click.group()
 @click.pass_context
@@ -52,3 +53,8 @@ def history(table):
     """ Viewing record history """
     results = query(table, desc=True)
     print (terminaltable(results["columns"], results["rows"], title = table.capitalize()))
+
+@cli.command(short_help = "GUI Mode")
+@click.pass_context
+def gui(ctx):
+    GUI(ctx.obj, title="IT9 Manufacturing Ltd.", config_file = "config.ini")
