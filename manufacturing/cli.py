@@ -27,13 +27,12 @@ def input(ctx, input_filename):
     click.echo("Successful request input")
 
 @cli.command(short_help = "Inventory Monitoring")
-@click.option("--date", "-d", "date", default = None)
 @click.option("--print", "-p", "dump", is_flag=True)
 @click.option("--output", "-o", "filename", default = "inventory.csv")
 @click.pass_context
-def inventory(ctx, date, dump, filename):
+def inventory(ctx, dump, filename):
     """ Inventory Monitoring """
-    data, columns = ctx.obj.inventory(date)
+    data, columns = ctx.obj.inventory()
     if dump:
         # dump to terminal
         print (terminaltable(columns, data, title = "Inventory"))

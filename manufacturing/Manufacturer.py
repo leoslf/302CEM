@@ -153,21 +153,6 @@ class Manufacturer(object):
         output_filename = self.compose_filename(input_filename, "output")
         return write_csv(output_filename, fieldnames, logistics_requests)
 
-    def inventory(self, date = None):
-        # Default Today
-        if date is None:
-            date = datetime.date.today().strftime("%Y-%m-%d")
-
-        restocks = query("Material AS m", "m.id AS Material_id, COALESCE(SUM(r.qty), 0) AS qty", join = "(SELECT * FROM Restock WHERE DATE(create_timestamp) <= '%s') AS r ON r.Material_id = m.id" % date, groupby = "m.id", join_type = "LEFT")
-        consumptions = query("Material AS m", "m.id AS Material_id, COALESCE(SUM(c.qty), 0) AS qty", join = "(SELECT * FROM Consumption WHERE DATE(create_timestamp) <= '%s') AS c ON c.Material_id = m.id" % date,  groupby = "m.id", join_type = "LEFT")
-
-        results = query("Material", "*, 0 AS qty", desc = True)
-        materials, columns = results["rows"], results["columns"]
-        for material in materials:
-            id = material["id"]
-            restock_row = filter(lambda row: row["Material_id"] == id, restocks)[0]
-            consumption_row = filter(lambda row: row["Material_id"] == id, consumptions)[0]
-            material["qty"] = restock_row["qty"] - consumption_row["qty"]
-
-        return materials, columns
+    def inventory(self):
+        return query("Inventory", get_columns=True)
     

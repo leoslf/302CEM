@@ -288,7 +288,7 @@ GROUP BY m.id;
 -- 檢視表結構 Logistics_Request_View
 --
 
-CREATE OR REPLACE VIEW Logistics_Request_View  AS  select d.name AS shipper_name,d.email AS shipper_email,l.id AS id,l.quantity AS quantity,l.weight AS weight,l.Customer_id AS Customer_id,c.name AS receiver_name,concat(c.address1,', ',c.address2,', ',c.address3) AS receiver_address,c.contact AS receiver_contact from ((Logistics_Request l join Customer d on((d.id = ''))) join Customer c on((c.id = l.Customer_id))) ;
+CREATE OR REPLACE VIEW Logistics_Request_View  AS  select d.name AS shipper_name,d.email AS shipper_email,l.id AS id,l.quantity AS quantity,l.weight AS weight,l.Customer_id AS Customer_id,c.name AS receiver_name, CONCAT_WS(', ', c.address1, c.address2, c.address3) AS receiver_address,c.contact AS receiver_contact from ((Logistics_Request l join Customer d on((d.id = ''))) join Customer c on((c.id = l.Customer_id))) ;
 
 -- --------------------------------------------------------
 
