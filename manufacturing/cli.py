@@ -3,6 +3,7 @@ import itertools
 from terminaltables import DoubleTable
 from Manufacturer import *
 from gui import *
+from server import *
 
 @click.group()
 @click.pass_context
@@ -57,3 +58,8 @@ def history(table):
 @click.pass_context
 def gui(ctx):
     GUI(ctx.obj, title="IT9 Manufacturing Ltd.", config_file = "config.ini")
+
+@cli.command(short_help = "start tcp server")
+@click.option("--port", "-p", "port", default=5000, type=int)
+def server(port):
+    run_server(port)
