@@ -273,7 +273,7 @@ CREATE OR REPLACE VIEW Restock_View  AS  select Restock.Material_id AS Material_
 
 CREATE OR REPLACE VIEW Inventory AS
 SELECT
-    m.id AS Material_id,
+    m.id AS id,
     COALESCE(SUM(IF(m.id = r.Material_id, r.qty, 0)) - SUM(IF(m.id = c.Material_id, c.qty, 0)), 0) AS qty
 FROM
     Material m
