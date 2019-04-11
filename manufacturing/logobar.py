@@ -51,8 +51,17 @@ class LogoBar(Frame):
         self.height = int(root.winfo_height() * 0.075)
         Frame.__init__(self, root, height=self.height)
 
-        color1 = "1d2b64"
-        color2 = "f8cdda"
+        # color1 = "1d2b64"
+        # color2 = "f8cdda"
+
+        # color1 = "00c6fb"
+        # color2 = "005bea"
+
+        # color1 = "e1eec3"
+        # color2 = "f05053"
+
+        color1 = "000046"
+        color2 = "1cb5e0"
 
         colors = [hex2tuple(s) for s in (color1, color2)]
         color1, color2 = colors
