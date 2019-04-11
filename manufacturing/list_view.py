@@ -1,3 +1,4 @@
+# -*- coding: UTF-8 -*-# enable debugging
 from Tkinter import *
 from ttk import *
 from tkMessageBox import *
@@ -143,7 +144,7 @@ class ListView(Frame):
             """
             special table querying for sales order tab
             """
-            print (self.kwargs)
+            # print (self.kwargs)
             if self.special and self.special_idx != -1:        
                 if 'condition' in self.kwargs:
                     del self.kwargs['condition']
@@ -239,15 +240,9 @@ class ListView(Frame):
 
             if len(txt) < 1:
                 # no filter
-                self.visibility = [True] * len(self.rows)
+                self.visibility = [True for _ in range(len(self.rows))]
             else:
-                self.visibility = linearsearch_table(self.rows, txt, lambda a, b: default_cmp(str(a)[:len(b)],b))
-                #self.visibility = [False] * len(self.rows)
-                #for i in range(len(self.rows)):
-                #    for j in range(len(self.rows[i])):
-                #        if str(self.rows[i][j])[:len(txt)] == txt:
-                #            self.visibility[i] = True
-                #            break # the row is valid already
+                self.visibility = [any(txt.lower() in str(value).lower() for col, value in row.items()) for row in self.rows]
 
             self.update_rows()
 
@@ -256,13 +251,13 @@ class ListView(Frame):
             """config_columns"""
             self['columns'] = self['displaycolumns'] = self.cols
             debug(self['columns'])
-            print (self.rows)
+            # print (self.rows)
             col_len = max_col(self['columns'], self.rows)
             
             debug("col_len: %r", col_len)
             total_len = sum(col_len)
             col_len = [int(l * float(self.width) / total_len) for l in col_len]
-            print (col_len, self.cols)
+            # print (col_len, self.cols)
             debug("new col_len: %r", col_len)
             self.column("#0", width = 0, stretch=False)
             for i, col in enumerate(self.cols):
@@ -305,8 +300,10 @@ class ListView(Frame):
                 Column number of the column required ascending sort
             """
             info("column #%d pressed" % columnNo)
-            #debug(list(zip(*self.rows))[columnNo])
-            self.order = msort(self.order, lambda a, b: self.comparator(columnNo, a, b))
+            # print (self.rows)
+            # print (self.order)
+            # print (columnNo)
+            self.order = sorted(self.order, key = lambda index: self.rows[index][self.cols[columnNo]])
             info(self.order)
             self.update_rows()
 
@@ -334,7 +331,7 @@ class ListView(Frame):
 
             """
             a, b = self.rows[a][col], self.rows[b][col]
-            #print((a, b))
+            # print((a, b))
             if a is None or b is None:
                 return 0
             if str(a).isdigit() and str(b).isdigit() or isinstance(a, numbers.Number) and isinstance(b, numbers.Number):
@@ -523,9 +520,9 @@ class ListView(Frame):
             self.btns['Delete']['state'] = 'normal'
             self.clear()
             self.manual_mode = True
-            print (self.entries)
-            print (idx)
-            print (self.tbl_handle.rows)
+            # print (self.entries)
+            # print (idx)
+            # print (self.tbl_handle.rows)
             for i, entry in enumerate(self.entries):
                 entry.insert(0, self.tbl_handle.rows[idx].values()[i])
             self.mode = "edit"

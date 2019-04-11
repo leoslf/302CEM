@@ -273,7 +273,7 @@ CREATE OR REPLACE VIEW Restock_View  AS  select Restock.Material_id AS Material_
 
 CREATE OR REPLACE VIEW Inventory AS
 SELECT
-    m.id AS id,
+    m.*,
     COALESCE(SUM(IF(m.id = r.Material_id, r.qty, 0)) - SUM(IF(m.id = c.Material_id, c.qty, 0)), 0) AS qty
 FROM
     Material m
@@ -295,8 +295,30 @@ CREATE OR REPLACE VIEW Logistics_Request_View  AS  select d.name AS shipper_name
 --
 -- 檢視表結構 Request_View
 --
-CREATE OR REPLACE VIEW Request_View  AS  select r.id AS Request_id,r.Invoice_id AS Invoice_id,lrr.Logistics_Request_id AS Logistics_Request_id,lrv.shipper_name AS shipper_name,lrv.shipper_email AS shipper_email,lrv.id AS id,lrv.quantity AS quantity,lrv.weight AS weight,lrv.Customer_id AS Customer_id,lrv.receiver_name AS receiver_name,lrv.receiver_address AS receiver_address,lrv.receiver_contact AS receiver_contact from ((Request r left join Logistics_Request_Request lrr on((lrr.Request_id = r.id))) left join Logistics_Request_View lrv on((lrv.id = lrr.Logistics_Request_id))) ;
-
+CREATE OR REPLACE VIEW Request_View AS
+SELECT
+    r.id AS Request_id,
+    r.Invoice_id AS Invoice_id,
+    lrr.Logistics_Request_id AS Logistics_Request_id,
+    lrv.shipper_name AS shipper_name,
+    lrv.shipper_email AS shipper_email,
+    lrv.id AS id,
+    lrv.quantity AS quantity,
+    lrv.weight AS weight,
+    lrv.Customer_id AS Customer_id,
+    lrv.receiver_name AS receiver_name,
+    lrv.receiver_address AS receiver_address,
+    lrv.receiver_contact AS receiver_contact
+FROM
+    Request r
+LEFT JOIN
+    Logistics_Request_Request lrr
+ON
+    lrr.Request_id = r.id
+LEFT JOIN
+    Logistics_Request_View lrv
+ON
+    lrv.id = lrr.Logistics_Request_id;
 -- --------------------------------------------------------
 
 
