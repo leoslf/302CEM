@@ -1,5 +1,6 @@
 from Tkinter import *
 import ttk
+import platform
 
 
 def hex2tuple(s):
@@ -18,6 +19,11 @@ def hex2tuple(s):
         len(n)//2 - tuple of 8-bit integer
     """
     return tuple(int(s[i:i+2], 16) for i in range(0, len(s), 2))
+
+if platform.system() == "Darwin":
+    transparency = "systemTransparent"
+else:
+    transparency = "white"
 
 class LogoBar(Frame):
     """
@@ -54,7 +60,7 @@ class LogoBar(Frame):
         #canvas = self.GradientCanvas(self, (0, 198, 251), (0,91,234), self.height, True)
         Label(canvas, text=app_name)
         #lbls = [Label(canvas, text=s, fg="white", bg="green") for s in (app_name, displayed_username)]
-        lbls = [Label(canvas, text=s, fg="white", bg="systemTransparent", font=("Helvetica", 20)) for s in (app_name, displayed_username)]
+        lbls = [Label(canvas, text=s, fg="white", bg=transparency, font=("Helvetica", 20)) for s in (app_name, displayed_username)]
         xpos = [self.width * ratio for ratio in [0.02, 0.85]]
         for lbl, x in zip(lbls, xpos):
             lbl.place(x=x, y=(self.height - 26) // 2)
