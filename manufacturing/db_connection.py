@@ -81,6 +81,7 @@ def query(table,
           join_type = "INNER",
           filter=None,
           err_msg=None,
+          get_columns = False,
           *argv,
           **kwargs):
 
@@ -108,6 +109,8 @@ def query(table,
                                     or item[attrib] == filter[attrib]
                                 for attrib in filter)]
             columns = list(zip(*cursor.description))[0]
+            if get_columns:
+                return rows, columns
             return rows if desc == False else OrderedDict([("rows", rows), ("description", cursor.description), ("columns", columns)])
     except:
         tb = traceback.format_exc()
