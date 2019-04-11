@@ -22,6 +22,10 @@ def test_createdb():
             cursor.execute("SHOW TABLES")
             for row in cursor.fetchall():
                 print(row)
+        else:
+            raise RuntimeError("Failed to get cursor from connection")
+    else:
+        raise RuntimeError("Failed to connect database")
     assert False
 
 def test_dropdb():
