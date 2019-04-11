@@ -1,39 +1,50 @@
+# -*- coding: UTF-8 -*-# enable debugging
 import csv
 import pytest
 import pymysql
 import database_credential
 
 from Manufacturer import *
+from db_connection import OrderedDictCursor
 
 credential_testing = dict(host="localhost", user="302CEM_Test", password="302CEM_Test", db="302CEM_Test")
 
+expected_tables = [
+    ('Consumption',),
+    ('Consumption_View',),
+    ('Customer',),
+    ('Inventory',),
+    ('Logistics',),
+    ('Logistics_Request',),
+    ('Logistics_Request_Request',),
+    ('Logistics_Request_View',),
+    ('Material',),
+    ('Product',),
+    ('Production',),
+    ('Recipe',),
+    ('Request',),
+    ('Request_View',),
+    ('Restock',),
+    ('Restock_View',)
+]
+
+@pytest.fixture
 def create_script():
     with open("dataformat.sql") as f:
         return f.read()
 
-def test_createdb():
+def test_setupdb(create_script):
     credential = database_credential.db
     credential.update(credential_testing)
     assert all(credential[key] == credential_testing[key] for key in credential.keys())
-    print (create_script())
-    with pymysql.connect(**credential) as conn:
-        with conn.cursor() as cursor:
-            cursor.execute(create_script())
-            cursor.execute("SHOW TABLES")
-            for row in cursor.fetchall():
-                print(row)
-        else:
-            raise RuntimeError("Failed to get cursor from connection")
-    else:
-        raise RuntimeError("Failed to connect database")
-    assert False
-
-def test_dropdb():
-    # credential.pop("db")
-    # conn = pymysql.connect(**credential)
-    # with conn.cursor() as cursor:
-    #     cursor.execute("DROP DATABASE %s" % testing_db)
-    pass
+    conn = pymysql.connect(**credential)
+    with conn.cursor() as cursor:
+        cursor.mogrify(create_script)
+        cursor.execute("SHOW TABLES")
+        actual_tables = list(cursor.fetchall())
+        assert actual_tables == expected_tables
+    conn.commit()
+    conn.close()
 
 
 # def cases():
