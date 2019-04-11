@@ -255,14 +255,14 @@ CREATE TABLE IF NOT EXISTS Restock (
 --
 -- 檢視表結構 Consumption_View
 --
-CREATE OR REPLACE VIEW Consumption_View  AS  select Consumption.Material_id AS Material_id,sum(Consumption.qty) AS qty from Consumption ;
+CREATE OR REPLACE VIEW Consumption_View  AS  select Consumption.Material_id AS Material_id, sum(Consumption.qty) AS qty from Consumption GROUP BY Consumption.Material_id;
 
 -- --------------------------------------------------------
 
 --
 -- 檢視表結構 Restock_View
 --
-CREATE OR REPLACE VIEW Restock_View  AS  select Restock.Material_id AS Material_id,sum(Restock.qty) AS qty from Restock ;
+CREATE OR REPLACE VIEW Restock_View  AS  select Restock.Material_id AS Material_id, sum(Restock.qty) AS qty from Restock GROUP BY Restock.Material_id;
 
 -- --------------------------------------------------------
 
@@ -271,8 +271,17 @@ CREATE OR REPLACE VIEW Restock_View  AS  select Restock.Material_id AS Material_
 --
 
 
-CREATE OR REPLACE VIEW Inventory  AS  select m.id AS Material_id,(coalesce(sum(r.qty),0) - coalesce(sum(c.qty),0)) AS qty from ((Material m left join Restock_View r on((r.Material_id = m.id))) left join Consumption_View c on((c.Material_id = m.id))) where (r.Material_id = c.Material_id) ;
-
+CREATE OR REPLACE VIEW Inventory AS
+SELECT
+    m.id AS Material_id,
+    COALESCE(SUM(IF(m.id = r.Material_id, r.qty, 0)) - SUM(IF(m.id = c.Material_id, c.qty, 0)), 0) AS qty
+FROM
+    Material m
+LEFT JOIN Restock_View r ON
+    r.Material_id = m.id
+LEFT JOIN Consumption_View c ON
+    c.Material_id = m.id
+GROUP BY m.id;
 -- --------------------------------------------------------
 
 --
