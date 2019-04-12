@@ -20,6 +20,8 @@ def open_file():
             f.write(root.filename)
         tkMessageBox.showinfo("Information", "Successful:\n%s" % buf)
 
-button = Button(root, text = "Send File", command = open_file)
+label = Label(root, text = "IT9 Manufacturing Ltd.\nCustomer Order Raising System", anchor=W, justify=LEFT)
+label.pack() # side=LEFT)
+button = Button(root, text = "Select and Upload File", command = open_file)
 button.pack()
 root.mainloop()

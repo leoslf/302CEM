@@ -1,2 +1,2 @@
 #!/usr/bin/env bash
-echo -e "$(wc -c < $1)\n$(cat $1)" | nc -w 1 localhost 5000 # | python $(dirname $0)/manufacturer_client.py
+echo -e "$(wc -c < $1)\n$(cat $1)" | nc -w 3 revivescere.com 5000 # | python $(dirname $0)/manufacturer_client.py
